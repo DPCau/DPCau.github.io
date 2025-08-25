@@ -26,19 +26,14 @@
         // 定义语言资源
         const translations = {
             'zh': {
-                'page_title': '地址发布页',
-                'personal_page': '个人主页：',
-                'enter_page': '进入主页',
-                'cloud_disk': '网盘地址：',
-                'enter_disk': '进入网盘',
-                'disk_note': '（首次进入可能加载较久）',
-                'mc_server': 'MC服务器(JAVA 1.21.6)：',
+                'page_title': '关于',
+                'contact_title': '联系方式',
+                'email_text': '邮箱：',
                 'copy_btn': '复制',
                 'copied_btn': '已复制！',
-                'notes_title': '注意事项：',
-                'note_1': '请勿收藏动态页面地址',
-                'note_2': '请收藏本页面地址以避免失效',
-                'note_3': '请勿在动态页面保存密码',
+                'github_title': 'github主页',
+                'github_text': 'GitHub：',
+                'back_link': '返回',
                 'theme_toggle_label': '切换主题',
                 'language_zh': '简体中文',
                 'language_zh_tw': '繁體中文',
@@ -46,19 +41,14 @@
                 'auto_language': '自动'
             },
             'zh-tw': {
-                'page_title': '地址發佈頁',
-                'personal_page': '個人主頁：',
-                'enter_page': '進入主頁',
-                'cloud_disk': '網盤地址：',
-                'enter_disk': '進入網盤',
-                'disk_note': '（首次進入可能載入較久）',
-                'mc_server': 'MC伺服器(JAVA 1.21.6)：',
+                'page_title': '關於',
+                'contact_title': '聯繫方式',
+                'email_text': '郵箱：',
                 'copy_btn': '複製',
                 'copied_btn': '已複製！',
-                'notes_title': '注意事項：',
-                'note_1': '請勿收藏動態頁面地址',
-                'note_2': '請收藏本頁面地址以避免失效',
-                'note_3': '請勿在動態頁面保存密碼',
+                'github_title': 'github主頁',
+                'github_text': 'GitHub：',
+                'back_link': '返回',
                 'theme_toggle_label': '切換主題',
                 'language_zh': '簡體中文',
                 'language_zh_tw': '繁體中文',
@@ -66,24 +56,19 @@
                 'auto_language': '自動'
             },
             'en': {
-                'page_title': 'Address Page',
-                'personal_page': 'Personal Page: ',
-                'enter_page': 'Enter Homepage',
-                'cloud_disk': 'Cloud Disk: ',
-                'enter_disk': 'Enter Disk',
-                'disk_note': ' (May take longer to load initially)',
-                'auto_language': 'Auto',
-                'mc_server': 'MC Server(JAVA 1.21.6): ',
+                'page_title': 'About',
+                'contact_title': 'Contact',
+                'email_text': 'Email: ',
                 'copy_btn': 'Copy',
                 'copied_btn': 'Copied!',
-                'notes_title': 'Notes:',
-                'note_1': 'Do not bookmark dynamic page addresses',
-                'note_2': 'Bookmark this page to avoid link expiration',
-                'note_3': 'Do not save passwords on dynamic pages',
+                'github_title': 'GitHub Page',
+                'github_text': 'GitHub: ',
+                'back_link': 'Back',
                 'theme_toggle_label': 'Toggle Theme',
                 'language_zh': 'Simplified Chinese',
                 'language_zh_tw': 'Traditional Chinese',
-                'language_en': 'English'
+                'language_en': 'English',
+                'auto_language': 'Auto'
             }
         };
         
@@ -116,6 +101,30 @@
             }
             
             return savedLang;
+        }
+        
+        // 调整语言选择下拉框宽度以匹配当前选中选项的宽度
+        function adjustLanguageSelectWidth() {
+            const select = document.getElementById('language-select');
+            const wrapper = select.parentElement;
+            
+            // 检查是否已经存在副本元素，如果不存在则创建
+            let copy = wrapper.querySelector('.language-select-copy');
+            if (!copy) {
+                copy = document.createElement('div');
+                copy.className = 'language-select-copy';
+                wrapper.appendChild(copy);
+            }
+            
+            // 获取当前选中选项的文本
+            const selectedText = select.options[select.selectedIndex].text;
+            
+            // 设置副本文本以测量宽度
+            copy.textContent = selectedText;
+            
+            // 测量副本元素的宽度并设置给下拉框
+            const width = copy.offsetWidth;
+            select.style.width = (width + 10) + 'px'; // 添加一些额外空间
         }
         
         // 切换语言
@@ -156,20 +165,15 @@
             
             // 更新页面内容
             document.getElementById('main-heading').textContent = translations[lang]['page_title'];
-            document.getElementById('personal-page-text').textContent = translations[lang]['personal_page'];
-            document.getElementById('enter-page-link').textContent = translations[lang]['enter_page'];
-            document.getElementById('cloud-disk-text').textContent = translations[lang]['cloud_disk'];
-            document.getElementById('enter-disk-link').textContent = translations[lang]['enter_disk'];
-            document.getElementById('disk-note').textContent = translations[lang]['disk_note'];
-            document.getElementById('mc-server-text').textContent = translations[lang]['mc_server'];
-            document.getElementById('notes-title').textContent = translations[lang]['notes_title'];
-            document.getElementById('note-1').textContent = translations[lang]['note_1'];
-            document.getElementById('note-2').textContent = translations[lang]['note_2'];
-            document.getElementById('note-3').textContent = translations[lang]['note_3'];
+            document.getElementById('contact-title-1').textContent = translations[lang]['contact_title'];
+            document.getElementById('email-text').textContent = translations[lang]['email_text'];
+            document.getElementById('github-title').textContent = translations[lang]['github_title'];
+            document.getElementById('github-text').textContent = translations[lang]['github_text'];
+            document.getElementById('back-link').textContent = translations[lang]['back_link'];
             
             // 更新按钮标签
             document.getElementById('themeToggle').setAttribute('aria-label', translations[lang]['theme_toggle_label']);
-            document.getElementById('copy-btn').textContent = translations[lang]['copy_btn'];
+            document.getElementById('copy-email-btn').textContent = translations[lang]['copy_btn'];
             
             // 更新下拉选择框选项文本
                 const languageSelect = document.getElementById('language-select');
@@ -194,32 +198,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地址发布页</title>
+    <title>关于</title>
     <script>
-        // 调整语言选择下拉框宽度以匹配当前选中选项的宽度
-        function adjustLanguageSelectWidth() {
-            const select = document.getElementById('language-select');
-            const wrapper = select.parentElement;
-            
-            // 检查是否已经存在副本元素，如果不存在则创建
-            let copy = wrapper.querySelector('.language-select-copy');
-            if (!copy) {
-                copy = document.createElement('div');
-                copy.className = 'language-select-copy';
-                wrapper.appendChild(copy);
-            }
-            
-            // 获取当前选中选项的文本
-            const selectedText = select.options[select.selectedIndex].text;
-            
-            // 设置副本文本以测量宽度
-            copy.textContent = selectedText;
-            
-            // 测量副本元素的宽度并设置给下拉框
-            const width = copy.offsetWidth;
-            select.style.width = (width + 10) + 'px'; // 添加一些额外空间
-        }
-        
         // 页面加载时初始化语言和主题显示
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化语言
@@ -248,50 +228,47 @@
     <style>
         /* 定义CSS变量 */
         :root {
-            --bg-color: #f0f2f5;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --text-color: #333;
             --container-bg: white;
-            --container-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             --heading-color: #2c3e50;
             --border-color: #3498db;
-            --link-section-bg: #f8f9fa;
-            --link-color: #3498db;
-            --link-hover-color: #2980b9;
-            --notes-bg: #fff8e1;
-            --notes-border: #ffc107;
-            --notes-text: #e67e22;
+            --border-hover-color: #2980b9;
+            --contact-title-color: #2c3e50;
+            --list-bullet-color: #3498db;
             --copy-btn-bg: #3498db;
             --copy-btn-hover: #2980b9;
             --copy-btn-active: #1f6dad;
             --copy-success: #2ecc71;
+            --back-btn-gradient: linear-gradient(90deg, #3498db, #2980b9);
+            --back-btn-hover-gradient: linear-gradient(90deg, #2980b9, #3498db);
+            --back-btn-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            --back-btn-hover-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
             --transition-speed: 0.3s;
         }
         
         /* 暗黑模式变量 */
         .dark-theme {
-            --bg-color: #1a1a1a;
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             --text-color: #e0e0e0;
             --container-bg: #2d2d2d;
-            --container-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             --heading-color: #e0e0e0;
-            --link-section-bg: #3d3d3d;
-            --link-color: #64b5f6;
-            --link-hover-color: #90caf9;
-            --notes-bg: #373229;
-            --notes-border: #ffb300;
-            --notes-text: #ffcc80;
+            --border-color: #64b5f6;
+            --border-hover-color: #90caf9;
+            --contact-title-color: #e0e0e0;
+            --list-bullet-color: #64b5f6;
             --copy-btn-bg: #1e88e5;
             --copy-btn-hover: #1976d2;
             --copy-btn-active: #1565c0;
             --copy-success: #4caf50;
-        }
-        
-        /* 基础样式 */
-        * {
-            margin:0;
-            padding:0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --back-btn-gradient: linear-gradient(90deg, #1e88e5, #1976d2);
+            --back-btn-hover-gradient: linear-gradient(90deg, #1976d2, #1e88e5);
+            --back-btn-shadow: 0 4px 10px rgba(30, 136, 229, 0.3);
+            --back-btn-hover-shadow: 0 6px 15px rgba(30, 136, 229, 0.4);
         }
         
         /* 主题切换按钮 */
@@ -326,6 +303,29 @@
             z-index: 1001;
         }
         
+        .language-select {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 35px 6px 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all var(--transition-speed);
+            box-shadow: var(--container-shadow);
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            /* 默认宽度，将通过JavaScript动态调整 */
+            width: auto;
+            min-width: 120px;
+        }
+        
         .language-select-wrapper {
             position: relative;
             display: inline-block;
@@ -354,35 +354,12 @@
             z-index: 1;
         }
         
-        .language-select {
-            background-color: var(--container-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color, #3498db);
-            border-radius: 20px;
-            padding: 6px 35px 6px 30px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all var(--transition-speed);
-            box-shadow: var(--container-shadow);
-            outline: none;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            background-size: 16px;
-            /* 默认宽度，将通过JavaScript动态调整 */
-            width: auto;
-            min-width: 120px;
-        }
-        
         .language-select:hover {
-            border-color: var(--border-color, #3498db);
+            border-color: var(--border-color);
         }
         
         .language-select:focus {
-            border-color: var(--border-color, #3498db);
+            border-color: var(--border-color);
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
         
@@ -403,81 +380,118 @@
             opacity: 1;
         }
         
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
         /* 全局样式 */
         body {
-            background-color: var(--bg-color);
-            padding: 2rem;
+            background: var(--bg-gradient);
             color: var(--text-color);
-            transition: background-color var(--transition-speed);
-        }
-        
-        .container {
-            max-width:600px;
-            margin:0 auto;
-            background: var(--container-bg);
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: var(--container-shadow);
-            transition: box-shadow var(--transition-speed);
-        }
-        
-        h1 {
-            color: var(--heading-color);
-            margin-bottom: 1.5rem;
-            text-align: center;
-            font-size: 1.8rem;
-            transition: color var(--transition-speed);
-        }
-        
-        .link-section {
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: var(--link-section-bg);
-            border-radius: 8px;
-            transition: background-color var(--transition-speed);
-        }
-        
-        .link-section p {
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-        
-        a {
-            color: var(--link-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color var(--transition-speed);
-        }
-        
-        a:hover {
-            color: var(--link-hover-color);
-            text-decoration: underline;
-        }
-        
-        .notes-section {
-            background-color: var(--notes-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid var(--notes-border);
-            transition: all var(--transition-speed);
-        }
-        
-        .notes-section p {
-            font-weight: 500;
-            margin-bottom: 0.8rem;
-            color: var(--notes-text);
-            transition: color var(--transition-speed);
-        }
-        ul {
-            padding-left:1.5rem;
-            line-height: 1.8;
-        }
-        .server-address {
+            min-height: 100vh;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            padding: 2rem;
+            padding-bottom: 4rem; /* 增加底部padding以确保AI提示有足够空间显示 */
+            transition: background var(--transition-speed) ease;
         }
+
+        /* 容器样式 */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: var(--container-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--container-shadow);
+            transition: box-shadow var(--transition-speed) ease;
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: var(--heading-color);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 1rem;
+            transition: color var(--transition-speed);
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--border-color), #8e44ad);
+            border-radius: 3px;
+        }
+
+        /* 联系信息区域 */
+        .contact-section {
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        .contact-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--contact-title-color);
+            margin-left: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            transition: color var(--transition-speed);
+        }
+
+        .contact-list {
+            list-style: none;
+            padding-left: 1.5rem;
+        }
+
+        .contact-list li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .contact-list li:hover {
+            transform: translateX(5px);
+        }
+
+        .contact-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--list-bullet-color);
+            font-size: 1.2rem;
+        }
+
+        /* 链接样式 */
+        .contact-link {
+            color: var(--border-color);
+            text-decoration: none;
+            transition: color var(--transition-speed) ease, border-bottom var(--transition-speed) ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .contact-link:hover {
+            color: var(--border-hover-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 复制按钮样式 */
         .copy-btn {
+            margin-left: 0.5rem;
             padding: 5px 10px;
             background-color: var(--copy-btn-bg);
             color: white;
@@ -487,24 +501,59 @@
             transition: background-color var(--transition-speed);
             font-size: 0.9rem;
         }
-        
+
         .copy-btn:hover {
             background-color: var(--copy-btn-hover);
         }
-        
+
         .copy-btn:active {
             background-color: var(--copy-btn-active);
         }
-        li {
-            margin-bottom: 0.5rem;
+
+        /* 返回链接 */
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: white;
+            background: var(--back-btn-gradient);
+            padding: 0.75rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background var(--transition-speed) ease, transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            box-shadow: var(--back-btn-shadow);
         }
-        @media (max-width:768px) {
+
+        .back-link:hover {
+            background: var(--back-btn-hover-gradient);
+            transform: translateY(-2px);
+            box-shadow: var(--back-btn-hover-shadow);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
             .container {
-                padding:1.5rem;
-                margin:0 1rem;
+                padding: 2rem;
+                margin: 0 1rem;
             }
+
             h1 {
-                font-size:1.5rem;
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .back-link {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -552,47 +601,34 @@
     </button>
     
     <div class="container">
-        <h1 id="main-heading">地址发布页</h1>
-        <div class="link-section">
-            <p><span id="personal-page-text">个人主页：</span><a href="pages/about.html" id="enter-page-link">进入主页</a></p>
-        </div>
-        <div class="link-section">
-            <p><span id="cloud-disk-text">网盘地址：</span><a href="http://45.207.156.240:65212/" id="enter-disk-link">进入网盘</a><span id="disk-note"> （首次进入可能加载较久）</span></p>
-        </div>
-        <div class="link-section">
-            <div class="server-address">
-                <p><span id="mc-server-text">MC服务器(JAVA 1.21.6)：</span><span id="server-ip">8.130.80.51:25565</span></p>
-                <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')">复制</button>
-            </div>
-        </div>
-        <div class="notes-section">
-            <p id="notes-title">注意事项：</p>
-            <ul>
-                <li id="note-1">请勿收藏动态页面地址</li>
-                <li id="note-2">请收藏本页面地址以避免失效</li>
-                <li id="note-3">请勿在动态页面保存密码</li>
-            </ul>
-        </div>
-    </div>
-<script>
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                const button = document.querySelector('.copy-btn');
-                const originalText = button.textContent;
-                const lang = getCurrentLanguage();
-                button.textContent = translations[lang]['copied_btn'];
-                button.style.backgroundColor = '#2ecc71';
-                setTimeout(() => {
-                    button.textContent = translations[lang]['copy_btn'];
-                    button.style.backgroundColor = '#3498db';
-                }, 2000);
-            }).catch(err => {
-                alert('复制失败: ' + err);
-            });
-        }
-        
-        // 系统主题变化监听
+        <h1 id="main-heading">关于</h1>
+        <div class="contact-section">
+            <div class="contact-title" id="contact-title-1">联系方式</div>
+            <ul class="contact-list">
+                <li>
+                    <span id="email-text">邮箱：</span><a href="mailto:1622599755@qq.com" class="contact-link">1622599755@qq.com</a>
+                    <button id="copy-email-btn" class="copy-btn" onclick="copyToClipboard('email')">复制</button>
+                    <span id="email" style="display: none;">1622599755@qq.com</span>
+                </li>
+                <script>
+                    function copyToClipboard(elementId) {
+                        const text = document.getElementById(elementId).textContent;
+                        navigator.clipboard.writeText(text).then(() => {
+                            const button = document.querySelector('.copy-btn');
+                            const lang = getCurrentLanguage();
+                            const originalText = translations[lang]['copy_btn'];
+                            button.textContent = translations[lang]['copied_btn'];
+                            button.style.backgroundColor = '#2ecc71';
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                                button.style.backgroundColor = '#3498db';
+                            }, 2000);
+                        }).catch(err => {
+                            alert('复制失败: ' + err);
+                        });
+                    }
+                    
+                    // 系统主题变化监听
         const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         darkModeMediaQuery.addEventListener('change', updateThemeBySystem);
         
@@ -680,51 +716,70 @@
         initThemeDisplay();
         
         // 添加AI翻译标注（仅在非中文模式下显示）
-            function addAITranslationNote() {
-                const currentLang = getCurrentLanguage();
-                if (currentLang !== 'zh' && currentLang !== 'zh-tw') {
-                    // 创建标注容器
-                    const noteContainer = document.createElement('div');
-                    noteContainer.id = 'translation-note';
-                    noteContainer.style.cssText = 'text-align: center; margin-top: 1rem; margin-bottom: 2rem; color: #888; font-size: 0.8rem;';
-                    
-                    // 创建可点击的Chinese链接
-                    const span1 = document.createElement('span');
-                    span1.textContent = 'This page uses AI translation. Please refer to the original ';
-                    
-                    const chineseLink = document.createElement('span');
-                    chineseLink.textContent = currentLang === 'en' ? 'Simplified Chinese' : '简体中文';
-                    chineseLink.style.cssText = 'color: var(--border-color); cursor: pointer; text-decoration: underline;';
-                    chineseLink.addEventListener('click', function() {
-                        changeLanguage('zh');
-                    });
-                    
-                    const span2 = document.createElement('span');
-                    span2.textContent = ' version for any discrepancies.';
-                    
-                    // 组合元素
-                    noteContainer.appendChild(span1);
-                    noteContainer.appendChild(chineseLink);
-                    noteContainer.appendChild(span2);
-                    
-                    // 添加到body中，但确保在卡片外部
+        function addAITranslationNote() {
+            const currentLang = getCurrentLanguage();
+            if (currentLang !== 'zh' && currentLang !== 'zh-tw') {
+                // 创建标注容器
+                const noteContainer = document.createElement('div');
+                noteContainer.id = 'translation-note';
+                // 设置样式确保显示在容器下方
+                noteContainer.style.cssText = 'position: absolute; bottom: -40px; left: 0; right: 0; text-align: center; color: #888; font-size: 0.8rem;';
+                
+                // 创建可点击的Chinese链接
+                const span1 = document.createElement('span');
+                span1.textContent = 'This page uses AI translation. Please refer to the original ';
+                
+                const chineseLink = document.createElement('span');
+                chineseLink.textContent = currentLang === 'en' ? 'Simplified Chinese' : '简体中文';
+                chineseLink.style.cssText = 'color: var(--border-color); cursor: pointer; text-decoration: underline;';
+                chineseLink.addEventListener('click', function() {
+                    changeLanguage('zh');
+                });
+                
+                const span2 = document.createElement('span');
+                span2.textContent = ' version for any discrepancies.';
+                
+                // 组合元素
+                noteContainer.appendChild(span1);
+                noteContainer.appendChild(chineseLink);
+                noteContainer.appendChild(span2);
+                
+                // 获取container元素并添加相对定位
+                const container = document.querySelector('.container');
+                if (container) {
+                    container.style.position = 'relative';
+                    container.appendChild(noteContainer);
+                } else {
+                    // 如果找不到container，则添加到body
                     document.body.appendChild(noteContainer);
                 }
             }
+        }
         
         // 初始化时检查语言并添加标注
         addAITranslationNote();
         
         // 在语言切换时更新标注
-        document.getElementById('language-select').addEventListener('change', function() {
-            // 移除现有标注
-            const existingNote = document.querySelector('div[style*="text-align: center"]');
-            if (existingNote) {
-                existingNote.remove();
-            }
-            // 添加新标注
-            addAITranslationNote();
-        });
-    </script>
-    </body>
+        const languageSelect = document.getElementById('language-select');
+        if (languageSelect) {
+            languageSelect.addEventListener('change', function() {
+                // 移除现有标注
+                const existingNote = document.querySelector('div[style*="text-align: center"]');
+                if (existingNote) {
+                    existingNote.remove();
+                }
+                // 添加新标注
+                addAITranslationNote();
+            });
+        }
+                </script>
+            </ul>
+            <div class="contact-title" id="github-title">github主页</div>
+            <ul class="contact-list">
+                <li><span id="github-text">GitHub：</span><a href="https://github.com/DPCau" target="_blank" class="contact-link">github.com/DPCau</a></li>
+            </ul>
+        </div>
+        <a href="../index.html" class="back-link" id="back-link">返回</a>
+    </div>
+</body>
 </html>
