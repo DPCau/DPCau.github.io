@@ -65,8 +65,8 @@
                 'github_text': 'GitHub: ',
                 'back_link': 'Back',
                 'theme_toggle_label': 'Toggle Theme',
-                'language_zh': 'Simplified Chinese',
-                'language_zh_tw': 'Traditional Chinese',
+                'language_zh': '简体中文',
+                'language_zh_tw': '繁體中文',
                 'language_en': 'English',
                 'auto_language': 'Auto'
             }
@@ -207,9 +207,9 @@
             applyTranslation(currentLang);
             
             // 设置下拉框的选中项
-            // 如果是自动模式，则将下拉框设置为'auto'
+            // 默认设置为'auto'模式，除非明确保存了其他语言偏好
             const savedLang = localStorage.getItem('language');
-            document.getElementById('language-select').value = savedLang === 'auto' ? 'auto' : currentLang;
+            document.getElementById('language-select').value = savedLang ? (savedLang === 'auto' ? 'auto' : savedLang) : 'auto';
             
             // 调整下拉框宽度
             adjustLanguageSelectWidth();

@@ -81,8 +81,8 @@
                 'note_2': 'Bookmark this page to avoid link expiration',
                 'note_3': 'Do not save passwords on dynamic pages',
                 'theme_toggle_label': 'Toggle Theme',
-                'language_zh': 'Simplified Chinese',
-                'language_zh_tw': 'Traditional Chinese',
+                'language_zh': '简体中文',
+                'language_zh_tw': '繁體中文',
                 'language_en': 'English'
             }
         };
@@ -227,9 +227,9 @@
             applyTranslation(currentLang);
             
             // 设置下拉框的选中项
-            // 如果是自动模式，则将下拉框设置为'auto'
+            // 默认设置为'auto'模式，除非明确保存了其他语言偏好
             const savedLang = localStorage.getItem('language');
-            document.getElementById('language-select').value = savedLang === 'auto' ? 'auto' : currentLang;
+            document.getElementById('language-select').value = savedLang ? (savedLang === 'auto' ? 'auto' : savedLang) : 'auto';
             
             // 调整下拉框宽度
             adjustLanguageSelectWidth();
@@ -426,7 +426,21 @@
             margin-bottom: 1.5rem;
             text-align: center;
             font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 1rem;
             transition: color var(--transition-speed);
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--border-color), #8e44ad);
+            border-radius: 3px;
         }
         
         .link-section {
