@@ -1,291 +1,31 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    <script>
-        // 在页面加载前就检查并应用主题，避免闪烁
-        (function() {
-            // 检查localStorage中的主题偏好
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            
-            // 设置初始主题类
-            if (savedTheme === 'dark') {
-                document.documentElement.classList.add('dark-theme');
-            } else if (savedTheme === 'light') {
-                document.documentElement.classList.add('light-theme');
-            } else {
-                // auto模式或没有保存的主题时，根据系统设置应用主题
-                if (prefersDark) {
-                    document.documentElement.classList.add('dark-theme');
-                } else {
-                    document.documentElement.classList.add('light-theme');
-                }
-            }
-        })();
-    </script>
-    <script>
-        // 定义语言资源
-        const translations = {
-            'zh': {
-                'page_title': '地址发布页',
-                'personal_page': '个人主页：',
-                'enter_page': '进入主页',
-                'cloud_disk': '网盘地址：',
-                'enter_disk': '进入网盘',
-                'disk_note': '（首次进入可能加载较久）',
-                'enter-disk-link-2': '备用地址',
-                'tail_chat': 'Tail Chat私有聊天平台：',
-                'enter_tail_chat': '进入Tail Chat',
-                'uestc_network_security_attack_and_defense_revision': '电子科技大学信息与软件工程学院网络安全攻防期末复习：',
-                'enter_uestc_network_security_attack_and_defense_doc_link': '进入文档',
-                'uestc_open_admission_info': '(外部网址)电子科技大学历年保研信息：',
-                'enter_uestc_open_admission_info': '进入',
-                'mc_server': 'MC服务器(JAVA 1.21.6)：',
-                'copy_btn': '复制',
-                'copied_btn': '已复制！',
-                'notes_title': '注意事项：',
-                'note_1': '请勿收藏动态页面地址',
-                'note_2': '请收藏本页面地址以避免失效',
-                'note_3': '请勿在动态页面保存密码',
-                'theme_toggle_label': '切换主题',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自动'
-            },
-            'zh-tw': {
-                'page_title': '地址發佈頁',
-                'personal_page': '個人主頁：',
-                'enter_page': '進入主頁',
-                'cloud_disk': '網盤地址：',
-                'enter_disk': '進入網盤',
-                'disk_note': '（首次進入可能載入較久）',
-                'enter-disk-link-2': '備用地址',
-                'tail_chat': 'Tail Chat私有聊天平臺：',
-                'enter_tail_chat': '進入Tail Chat',
-                'uestc_network_security_attack_and_defense_revision': '電子科技大學資訊與軟體工程學院網路安全攻防期末複習：',
-                'enter_uestc_network_security_attack_and_defense_doc_link': '進入資料',
-                'uestc_open_admission_info': '(外部網址)電子科技大學歷年保研資訊：',
-                'enter_uestc_open_admission_info': '進入',
-                'mc_server': 'MC伺服器(JAVA 1.21.6)：',
-                'copy_btn': '複製',
-                'copied_btn': '已複製！',
-                'notes_title': '注意事項：',
-                'note_1': '請勿收藏動態頁面地址',
-                'note_2': '請收藏本頁面地址以避免失效',
-                'note_3': '請勿在動態頁面保存密碼',
-                'theme_toggle_label': '切換主題',
-                'language_zh': '簡體中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自動'
-            },
-            'en': {
-                'page_title': 'Address Page',
-                'personal_page': 'Personal Page: ',
-                'enter_page': 'Enter',
-                'cloud_disk': 'Cloud Disk: ',
-                'enter_disk': 'Enter',
-                'disk_note': ' (May take longer to load initially)',
-                'enter-disk-link-2': 'Backup Link',
-                'tail_chat': 'Tail Chat Private Chat Platform: ',
-                'enter_tail_chat': 'Enter Tail Chat',
-                'uestc_network_security_attack_and_defense_revision': 'Revision of Network Security attack and defense of UESTC: ',
-                'enter_uestc_network_security_attack_and_defense_doc_link': 'Enter',
-                'uestc_open_admission_info': '(External website) UESTC Open Admission Info: ',
-                'enter_uestc_open_admission_info': 'Enter',
-                'mc_server': 'MC Server(JAVA 1.21.6): ',
-                'auto_language': 'Auto',
-                'copy_btn': 'Copy',
-                'copied_btn': 'Copied!',
-                'notes_title': 'Notes:',
-                'note_1': 'Do not bookmark dynamic page addresses',
-                'note_2': 'Bookmark this page to avoid link expiration',
-                'note_3': 'Do not save passwords on dynamic pages',
-                'theme_toggle_label': 'Toggle Theme',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文'
-            },
-            'wyw': {
-                'page_title': '發址頁',
-                'personal_page': '個家之址：',
-                'enter_page': '入頁',
-                'cloud_disk': '網盤之址：',
-                'enter_disk': '入盤',
-                'disk_note': '（首入載久）',
-                'enter-disk-link-2': '備址',
-                'tail_chat': 'Tail Chat私聊平臺：',
-                'enter_tail_chat': '入',
-                'uestc_network_security_attack_and_defense_revision': '電科軟院網安攻防溫故：',
-                'enter_uestc_network_security_attack_and_defense_doc_link': '入文',
-                'uestc_open_admission_info': '(外址)電子科大歷保之訊：',
-                'enter_uestc_open_admission_info': '進入',
-                'mc_server': 'MC之槽址(JAVA 1.21.6)：',
-                'copy_btn': '複製',
-                'copied_btn': '複也！',
-                'notes_title': '注意事項：',
-                'note_1': '勿藏動之址',
-                'note_2': '請藏本址以長存',
-                'note_3': '勿於動之址存碼',
-                'theme_toggle_label': '易色',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自動'
-            }
-        };
-        
-        // 系统语言偏好检测
-        function getSystemLanguage() {
-            // 获取浏览器的语言偏好
-            const browserLang = navigator.language || navigator.userLanguage;
-            
-            // 如果是中文相关的语言代码，返回相应的语言
-            if (browserLang.startsWith('zh')) {
-                // 检测是否是繁体中文
-                if (browserLang.includes('TW') || browserLang.includes('tw') || browserLang.includes('HK') || browserLang.includes('hk')) {
-                    return 'zh-tw';
-                } else {
-                    return 'zh';
-                }
-            }
-            
-            // 如果不是支持的语言，返回中文
-            return 'zh';
-        }
-        
-        // 获取当前语言设置
-        function getCurrentLanguage() {
-            const savedLang = localStorage.getItem('language');
-            
-            // 如果保存的是'auto'或没有保存，则使用系统语言
-            if (savedLang === 'auto' || !savedLang) {
-                return getSystemLanguage();
-            }
-            
-            return savedLang;
-        }
-        
-        // 切换语言
-        function changeLanguage(lang) {
-            // 支持'auto'、'zh'、'zh-tw'、'en'和'wyw'五种选项
-            if (['auto', 'zh', 'zh-tw', 'en', 'wyw'].includes(lang)) {
-                localStorage.setItem('language', lang);
-                
-                // 如果是自动模式，获取系统语言
-                const currentLang = lang === 'auto' ? getSystemLanguage() : lang;
-                
-                applyTranslation(currentLang);
-                
-                // 更新语言下拉框的选中状态
-                const languageSelect = document.getElementById('language-select');
-                if (languageSelect) {
-                    languageSelect.value = lang;
-                    
-                    // 调整下拉框宽度以匹配新选中的选项
-                    adjustLanguageSelectWidth();
-                }
-                
-                // 移除或添加AI翻译标注（根据当前语言）
-                const existingNote = document.querySelector('div[style*="text-align: center"]');
-                if (existingNote) {
-                    existingNote.remove();
-                }
-                // 文言文不添加AI翻译标注
-                if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
-                    addAITranslationNote();
-                }
-            }
-        }
-        
-        // 应用翻译
-        function applyTranslation(lang) {
-            // 更新页面标题
-            document.title = translations[lang]['page_title'];
-            
-            // 更新页面内容
-            document.getElementById('main-heading').textContent = translations[lang]['page_title'];
-            document.getElementById('personal-page-text').textContent = translations[lang]['personal_page'];
-            document.getElementById('enter-page-link').textContent = translations[lang]['enter_page'];
-            document.getElementById('cloud-disk-text').textContent = translations[lang]['cloud_disk'];
-            document.getElementById('enter-disk-link').textContent = translations[lang]['enter_disk'];
-            document.getElementById('disk-note').textContent = translations[lang]['disk_note'];
-            document.getElementById('enter-disk-link-2').textContent = translations[lang]['enter-disk-link-2'];
-            document.getElementById('tail-chat-text').textContent = translations[lang]['tail_chat'];
-            document.getElementById('enter-tail-chat-link').textContent = translations[lang]['enter_tail_chat'];
-            document.getElementById('uestc-network-security-attack-and-defense-revision').textContent = translations[lang]['uestc_network_security_attack_and_defense_revision'];
-            document.getElementById('enter-uestc-network-security-attack-and-defense-doc-link').textContent = translations[lang]['enter_uestc_network_security_attack_and_defense_doc_link'];
-            document.getElementById('uestc-open-admission-info').textContent = translations[lang]['uestc_open_admission_info'];
-            document.getElementById('enter-uestc-open-admission-info').textContent = translations[lang]['enter_uestc_open_admission_info'];
-            document.getElementById('mc-server-text').textContent = translations[lang]['mc_server'];
-            document.getElementById('notes-title').textContent = translations[lang]['notes_title'];
-            document.getElementById('note-1').textContent = translations[lang]['note_1'];
-            document.getElementById('note-2').textContent = translations[lang]['note_2'];
-            document.getElementById('note-3').textContent = translations[lang]['note_3'];
-            
-            // 更新按钮标签
-            document.getElementById('themeToggle').setAttribute('aria-label', translations[lang]['theme_toggle_label']);
-            document.getElementById('copy-btn').textContent = translations[lang]['copy_btn'];
-            
-            // 更新下拉选择框选项文本
-                const languageSelect = document.getElementById('language-select');
-                if (languageSelect) {
-                    // 获取系统语言显示名称
-                    const systemLang = getSystemLanguage();
-                    const systemLangName = systemLang === 'zh' ? translations[lang]['language_zh'] : 
-                                         systemLang === 'zh-tw' ? translations[lang]['language_zh_tw'] : 
-                                         translations[lang]['language_en'];
-                    
-                    // 更新自动选项的文本
-                    languageSelect.options[0].text = translations[lang]['auto_language'] + ' (' + systemLangName + ')';
-                    languageSelect.options[1].text = translations[lang]['language_zh'];
-                    languageSelect.options[2].text = translations[lang]['language_zh_tw'];
-                    languageSelect.options[3].text = translations[lang]['language_en'];
-                    languageSelect.options[4].text = translations[lang]['language_wyw'];
-                    // 保持当前选中的语言不变
-                    const currentValue = languageSelect.value;
-                    languageSelect.value = currentValue;
-                }
-        }
-    </script>
+    <!-- 引入公共主题和语言配置脚本 -->
+    <script src="js/common.js"></script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>地址发布页</title>
     <script>
-        // 调整语言选择下拉框宽度以匹配当前选中选项的宽度
-        function adjustLanguageSelectWidth() {
-            const select = document.getElementById('language-select');
-            const wrapper = select.parentElement;
+        // 页面特定的AI翻译标注函数实现
+        function addAITranslationNote() {
+            // 创建AI翻译标注
+            const noteDiv = document.createElement('div');
+            noteDiv.style.cssText = 'text-align: center; font-size: 12px; color: #666; margin-top: 10px; font-style: italic;';
+            noteDiv.textContent = 'AI翻译内容，仅供参考';
             
-            // 检查是否已经存在副本元素，如果不存在则创建
-            let copy = wrapper.querySelector('.language-select-copy');
-            if (!copy) {
-                copy = document.createElement('div');
-                copy.className = 'language-select-copy';
-                wrapper.appendChild(copy);
-            }
-            
-            // 获取当前选中选项的文本
-            const selectedText = select.options[select.selectedIndex].text;
-            
-            // 设置副本文本以测量宽度
-            copy.textContent = selectedText;
-            
-            // 测量副本元素的宽度并设置给下拉框
-            const width = copy.offsetWidth;
-            select.style.width = (width + 10) + 'px'; // 添加一些额外空间
+            // 将标注添加到页面底部
+            const mainContent = document.querySelector('main') || document.body;
+            mainContent.appendChild(noteDiv);
         }
         
         // 页面加载时初始化语言和主题显示
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化语言
-            const currentLang = getCurrentLanguage();
-            applyTranslation(currentLang);
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 保存页面原始内容
+            saveOriginalContent();
+            
+            // 初始化语言配置
+            await initializeTranslations();
             
             // 设置下拉框的选中项
             // 默认设置为'auto'模式，除非明确保存了其他语言偏好
@@ -473,20 +213,20 @@
         }
         
         .container {
-            max-width:600px;
-            margin:0 auto;
+            max-width: 1200px;
+            margin: 0 auto;
             background: var(--container-bg);
             padding: 2.5rem;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--container-shadow);
             transition: box-shadow var(--transition-speed);
         }
         
         h1 {
             color: var(--heading-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
             position: relative;
             padding-bottom: 1rem;
             transition: color var(--transition-speed);
@@ -498,88 +238,233 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
+            width: 80px;
+            height: 4px;
             background: linear-gradient(90deg, var(--border-color), #8e44ad);
             border-radius: 3px;
         }
         
-        .link-section {
+        /* 主卡片样式 */
+        .main-card {
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--container-shadow);
             margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: var(--link-section-bg);
-            border-radius: 8px;
-            transition: background-color var(--transition-speed);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all var(--transition-speed);
         }
         
-        .link-section p {
-            font-size: 1rem;
+        .main-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        /* 小卡片网格布局 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .small-card {
+            background: var(--container-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--container-shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all var(--transition-speed);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .small-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--border-color), #8e44ad);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        .card-content {
+            flex-grow: 1;
+        }
+        
+        .card-content p {
+            font-size: 0.95rem;
             line-height: 1.6;
+            color: var(--text-color);
+            margin-bottom: 1rem;
         }
         
-        a {
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .card-link {
             color: var(--link-color);
             text-decoration: none;
             font-weight: 500;
-            transition: color var(--transition-speed);
+            transition: all var(--transition-speed);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.2);
         }
         
-        a:hover {
+        .card-link:hover {
             color: var(--link-hover-color);
-            text-decoration: underline;
+            background: rgba(52, 152, 219, 0.2);
+            text-decoration: none;
+            transform: translateY(-1px);
+        }
+        
+        .card-link.secondary {
+            background: rgba(108, 117, 125, 0.1);
+            border: 1px solid rgba(108, 117, 125, 0.2);
+            color: var(--text-color);
+        }
+        
+        .card-link.secondary:hover {
+            background: rgba(108, 117, 125, 0.2);
         }
         
         .notes-section {
+            max-width: 500px;
+            margin: auto;
             background-color: var(--notes-bg);
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1.5rem;
+            border-radius: 10px;
             border-left: 4px solid var(--notes-border);
             transition: all var(--transition-speed);
         }
         
         .notes-section p {
-            font-weight: 500;
-            margin-bottom: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
             color: var(--notes-text);
             transition: color var(--transition-speed);
+            font-size: 1.1rem;
         }
+        
         ul {
-            padding-left:1.5rem;
+            padding-left: 1.5rem;
             line-height: 1.8;
         }
+        
         .server-address {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
+        
         .copy-btn {
-            padding: 5px 10px;
+            padding: 0.5rem 1rem;
             background-color: var(--copy-btn-bg);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color var(--transition-speed);
+            font-weight: 500;
+            transition: all var(--transition-speed);
             font-size: 0.9rem;
+            text-decoration: none;
         }
         
         .copy-btn:hover {
             background-color: var(--copy-btn-hover);
+            transform: translateY(-1px);
+            text-decoration: none;
         }
         
         .copy-btn:active {
             background-color: var(--copy-btn-active);
         }
+        
         li {
             margin-bottom: 0.5rem;
         }
-        @media (max-width:768px) {
+        
+        @media (max-width: 768px) {
             .container {
-                padding:1.5rem;
-                margin:0 1rem;
+                padding: 1.5rem;
+                margin: 0 1rem;
             }
+            
             h1 {
-                font-size:1.5rem;
+                font-size: 1.6rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .main-card {
+                padding: 1.5rem;
+            }
+            
+            .small-card {
+                padding: 1.2rem;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+            
+            .card-link {
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .main-card {
+                padding: 1rem;
+            }
+            
+            .small-card {
+                padding: 1rem;
             }
         }
     </style>
@@ -628,34 +513,107 @@
     </button>
     
     <div class="container">
-        <h1 id="main-heading">地址发布页</h1>
-        <div class="link-section">
-            <p><span id="personal-page-text">个人主页：</span><a href="pages/about.html" id="enter-page-link">进入主页</a></p>
-        </div>
-        <div class="link-section">
-            <p><span id="cloud-disk-text">网盘地址：</span><a href="http://ct-chmlfrp.220715.xyz:55212/" id="enter-disk-link" target="_blank">进入网盘 </a> <a href="https://shpyqj-rmlnoa-5212.app.cloudstudio.work/" id="enter-disk-link-2" target="_blank">备用地址</a><span id="disk-note"> （首次进入可能加载较久）</span></p>
-        </div>
-        <div class="link-section">
-            <p><span id="tail-chat-text">Tail Chat私有聊天平台：</span><a href="http://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank">进入Tail Chat</a></p>
-        </div>
-        <div class="link-section">
-            <p><span id="uestc-network-security-attack-and-defense-revision">电子科技大学信息与软件工程学院网络安全攻防期末复习：</span><a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank">进入文档</a></p>
-        </div>
-        <div class="link-section">
-            <p><span id="uestc-open-admission-info">(外部网址)电子科技大学历年保研信息：</span><a href="https://uestc.fuck.sylu.net/" id="enter-uestc-open-admission-info" target="_blank">进入</a></p>
-        </div>
-        <div class="link-section">
-            <div class="server-address">
-                <p><span id="mc-server-text">MC服务器(JAVA 1.21.6)：</span><span id="server-ip">CLOSED TEMPORARILY</span></p>
-                <!-- <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')">复制</button> -->
+        <h1 id="main-heading" data-translate-key="page_title">地址发布页</h1>
+        
+        <!-- 主卡片 - 个人主页 -->
+        <div class="main-card">
+            <div class="card-header">
+                <div class="card-icon">🏠</div>
+                <h2 class="card-title" id="personal-page-text" data-translate-key="personal_page">个人主页</h2>
+            </div>
+            <div class="card-content">
+                <p data-translate-key="personal_page_desc">访问我的主页，了解更多关于信息和联络方式。</p>
+            </div>
+            <div class="card-actions">
+                <a href="pages/about.html" id="enter-page-link" class="card-link" data-translate-key="enter_page">进入主页</a>
             </div>
         </div>
+        
+        <!-- 小卡片网格 -->
+        <div class="cards-grid">
+            <!-- 网盘卡片 -->
+            <div class="small-card">
+                <div class="card-header">
+                    <div class="card-icon">☁️</div>
+                    <h3 class="card-title" id="cloud-disk-text" data-translate-key="cloud_disk">网盘地址</h3>
+                </div>
+                <div class="card-content">
+                    <p data-translate-key="cloud_disk_desc">私有的云存储空间</p>
+                    <p id="disk-note" data-translate-key="disk_note">（首次进入可能加载较久）</p>
+                </div>
+                <div class="card-actions">
+                    <a href="http://ct-chmlfrp.220715.xyz:55212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
+                    <a href="https://shpyqj-rmlnoa-5212.app.cloudstudio.work/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a>
+                </div>
+            </div>
+            
+            <!-- Tail Chat卡片 -->
+            <div class="small-card">
+                <div class="card-header">
+                    <div class="card-icon">💬</div>
+                    <h3 class="card-title" id="tail-chat-text" data-translate-key="tail_chat">Tail Chat私有聊天平台</h3>
+                </div>
+                <div class="card-content">
+                    <p data-translate-key="tail_chat_desc">私有聊天平台，实时交流沟通</p>
+                </div>
+                <div class="card-actions">
+                    <a href="http://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank" class="card-link" data-translate-key="enter_tail_chat">进入Tail Chat</a>
+                </div>
+            </div>
+            
+            <!-- 网络安全复习卡片 -->
+            <div class="small-card">
+                <div class="card-header">
+                    <div class="card-icon">📚</div>
+                    <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
+                </div>
+                <div class="card-content">
+                    <p data-translate-key="network_security_desc">公开的复习资料</p>
+                </div>
+                <div class="card-actions">
+                    <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
+                </div>
+            </div>
+            
+            <!-- 保研信息卡片 -->
+            <div class="small-card">
+                <div class="card-header">
+                    <div class="card-icon">🎓</div>
+                    <h3 class="card-title" id="uestc-open-admission-info" data-translate-key="uestc_open_admission_info">电子科技大学历年保研信息</h3>
+                </div>
+                <div class="card-content">
+                    <p data-translate-key="admission_info_desc">链接外部网址，非本站运营内容，仅做参考</p>
+                </div>
+                <div class="card-actions">
+                    <a href="https://uestc.fuck.sylu.net/" id="enter-uestc-open-admission-info" target="_blank" class="card-link" data-translate-key="enter_uestc_open_admission_info">进入</a>
+                </div>
+            </div>
+            
+            <!-- MC服务器卡片 -->
+            <div class="small-card">
+                <div class="card-header">
+                    <div class="card-icon">🎮</div>
+                    <h3 class="card-title" id="mc-server-text" data-translate-key="mc_server">MC服务器(JAVA 1.21.6)</h3>
+                </div>
+                <div class="card-content">
+                    <p data-translate-key="mc_server_desc">我的Minecraft服务器</p>
+                    <div class="server-address">
+                        <span id="server-ip" data-translate-key="server_status">暂时关闭</span>
+                    </div>
+                </div>
+                <!-- <div class="card-actions">
+                    <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制</button>
+                </div> -->
+            </div>
+        </div>
+        
+        <!-- 注意事项 -->
         <div class="notes-section">
-            <p id="notes-title">注意事项：</p>
+            <p id="notes-title" data-translate-key="notes_title">注意事项：</p>
             <ul>
-                <li id="note-1">请勿收藏动态页面地址</li>
-                <li id="note-2">请收藏本页面地址以避免失效</li>
-                <li id="note-3">请勿在动态页面保存密码</li>
+                <li id="note-1" data-translate-key="note_1">请勿收藏动态页面地址</li>
+                <li id="note-2" data-translate-key="note_2">请收藏本页面地址以避免失效</li>
+                <li id="note-3" data-translate-key="note_3">请勿在动态页面保存密码</li>
             </ul>
         </div>
     </div>

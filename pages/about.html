@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+    <script src="../js/common.js"></script>
     <script>
         // 在页面加载前就检查并应用主题，避免闪烁
         (function() {
@@ -22,211 +23,59 @@
             }
         })();
     </script>
-    <script>
-        // 定义语言资源
-        const translations = {
-            'zh': {
-                'page_title': '关于',
-                'contact_title': '联系方式',
-                'email_text': '邮箱：',
-                'copy_btn': '复制',
-                'copied_btn': '已复制！',
-                'github_title': 'github主页',
-                'github_text': 'GitHub：',
-                'back_link': '返回',
-                'theme_toggle_label': '切换主题',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自动'
-            },
-            'zh-tw': {
-                'page_title': '關於',
-                'contact_title': '聯繫方式',
-                'email_text': '郵箱：',
-                'copy_btn': '複製',
-                'copied_btn': '已複製！',
-                'github_title': 'github主頁',
-                'github_text': 'GitHub：',
-                'back_link': '返回',
-                'theme_toggle_label': '切換主題',
-                'language_zh': '簡體中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自動'
-            },
-            'en': {
-                'page_title': 'About',
-                'contact_title': 'Contact',
-                'email_text': 'Email: ',
-                'copy_btn': 'Copy',
-                'copied_btn': 'Copied!',
-                'github_title': 'GitHub Page',
-                'github_text': 'GitHub: ',
-                'back_link': 'Back',
-                'theme_toggle_label': 'Toggle Theme',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': 'Auto'
-            },
-            'wyw': {
-                'page_title': '關於',
-                'main_title': '關於',
-                'contact_title': '信址',
-                'email_text': '電郵：',
-                'copy_btn': '複製',
-                'copied_btn': '複也！',
-                'github_title': 'github頁',
-                'github_text': 'GitHub：',
-                'back_link': '返也',
-                'theme_toggle_label': '易色',
-                'language_zh': '简体中文',
-                'language_zh_tw': '繁體中文',
-                'language_en': 'English',
-                'language_wyw': '文言文',
-                'auto_language': '自動'
-            }
-        };
-        
-        // 系统语言偏好检测
-        function getSystemLanguage() {
-            // 获取浏览器的语言偏好
-            const browserLang = navigator.language || navigator.userLanguage;
-            
-            // 如果是中文相关的语言代码，返回相应的语言
-            if (browserLang.startsWith('zh')) {
-                // 检测是否是繁体中文
-                if (browserLang.includes('TW') || browserLang.includes('tw') || browserLang.includes('HK') || browserLang.includes('hk')) {
-                    return 'zh-tw';
-                } else {
-                    return 'zh';
-                }
-            }
-            
-            // 如果不是支持的语言，返回中文
-            return 'zh';
-        }
-        
-        // 获取当前语言设置
-        function getCurrentLanguage() {
-            const savedLang = localStorage.getItem('language');
-            
-            // 如果保存的是'auto'或没有保存，则使用系统语言
-            if (savedLang === 'auto' || !savedLang) {
-                return getSystemLanguage();
-            }
-            
-            return savedLang;
-        }
-        
-        // 调整语言选择下拉框宽度以匹配当前选中选项的宽度
-        function adjustLanguageSelectWidth() {
-            const select = document.getElementById('language-select');
-            const wrapper = select.parentElement;
-            
-            // 检查是否已经存在副本元素，如果不存在则创建
-            let copy = wrapper.querySelector('.language-select-copy');
-            if (!copy) {
-                copy = document.createElement('div');
-                copy.className = 'language-select-copy';
-                wrapper.appendChild(copy);
-            }
-            
-            // 获取当前选中选项的文本
-            const selectedText = select.options[select.selectedIndex].text;
-            
-            // 设置副本文本以测量宽度
-            copy.textContent = selectedText;
-            
-            // 测量副本元素的宽度并设置给下拉框
-            const width = copy.offsetWidth;
-            select.style.width = (width + 10) + 'px'; // 添加一些额外空间
-        }
-        
-        // 切换语言
-        function changeLanguage(lang) {
-            // 支持'auto'、'zh'、'zh-tw'、'en'和'wyw'五种选项
-            if (['auto', 'zh', 'zh-tw', 'en', 'wyw'].includes(lang)) {
-                localStorage.setItem('language', lang);
-                
-                // 如果是自动模式，获取系统语言
-                const currentLang = lang === 'auto' ? getSystemLanguage() : lang;
-                
-                applyTranslation(currentLang);
-                
-                // 更新语言下拉框的选中状态
-                const languageSelect = document.getElementById('language-select');
-                if (languageSelect) {
-                    languageSelect.value = lang;
-                    
-                    // 调整下拉框宽度以匹配新选中的选项
-                    adjustLanguageSelectWidth();
-                }
-                
-                // 移除或添加AI翻译标注（根据当前语言）
-                const existingNote = document.querySelector('div[style*="text-align: center"]');
-                if (existingNote) {
-                    existingNote.remove();
-                }
-                // 文言文不添加AI翻译标注
-                if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
-                    addAITranslationNote();
-                }
-            }
-        }
-        
-        // 应用翻译
-        function applyTranslation(lang) {
-            // 更新页面标题
-            document.title = translations[lang]['page_title'];
-            
-            // 更新页面内容
-            document.getElementById('main-heading').textContent = translations[lang]['page_title'];
-            document.getElementById('contact-title-1').textContent = translations[lang]['contact_title'];
-            document.getElementById('email-text').textContent = translations[lang]['email_text'];
-            document.getElementById('github-title').textContent = translations[lang]['github_title'];
-            document.getElementById('github-text').textContent = translations[lang]['github_text'];
-            document.getElementById('back-link').textContent = translations[lang]['back_link'];
-            
-            // 更新按钮标签
-            document.getElementById('themeToggle').setAttribute('aria-label', translations[lang]['theme_toggle_label']);
-            document.getElementById('copy-email-btn').textContent = translations[lang]['copy_btn'];
-            
-            // 更新下拉选择框选项文本
-                const languageSelect = document.getElementById('language-select');
-                if (languageSelect) {
-                    // 获取系统语言显示名称
-                    const systemLang = getSystemLanguage();
-                    const systemLangName = systemLang === 'zh' ? translations[lang]['language_zh'] : 
-                                         systemLang === 'zh-tw' ? translations[lang]['language_zh_tw'] : 
-                                         translations[lang]['language_en'];
-                    
-                    // 更新自动选项的文本
-                    languageSelect.options[0].text = translations[lang]['auto_language'] + ' (' + systemLangName + ')';
-                    languageSelect.options[1].text = translations[lang]['language_zh'];
-                    languageSelect.options[2].text = translations[lang]['language_zh_tw'];
-                    languageSelect.options[3].text = translations[lang]['language_en'];
-                    languageSelect.options[4].text = translations[lang]['language_wyw'];
-                    // 保持当前选中的语言不变
-                    const currentValue = languageSelect.value;
-                    languageSelect.value = currentValue;
-                }
-        }
-    </script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>关于</title>
     <script>
-        // 页面加载时初始化语言和主题显示
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化语言
+        // 页面特定的AI翻译标注函数实现
+        function addAITranslationNote() {
             const currentLang = getCurrentLanguage();
-            applyTranslation(currentLang);
+            if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
+                // 创建标注容器
+                const noteContainer = document.createElement('div');
+                noteContainer.id = 'translation-note';
+                // 设置样式确保显示在容器下方
+                noteContainer.style.cssText = 'position: absolute; bottom: -40px; left: 0; right: 0; text-align: center; color: #888; font-size: 0.8rem;';
+                
+                // 创建可点击的Chinese链接
+                const span1 = document.createElement('span');
+                span1.textContent = 'This page uses AI translation. Please refer to the original ';
+                
+                const chineseLink = document.createElement('span');
+                chineseLink.textContent = currentLang === 'en' ? 'Simplified Chinese' : '简体中文';
+                chineseLink.style.cssText = 'color: var(--border-color); cursor: pointer; text-decoration: underline;';
+                chineseLink.addEventListener('click', function() {
+                    changeLanguage('zh');
+                });
+                
+                const span2 = document.createElement('span');
+                span2.textContent = ' version for any discrepancies.';
+                
+                // 组合元素
+                noteContainer.appendChild(span1);
+                noteContainer.appendChild(chineseLink);
+                noteContainer.appendChild(span2);
+                
+                // 获取container元素并添加相对定位
+                const container = document.querySelector('.container');
+                if (container) {
+                    container.style.position = 'relative';
+                    container.appendChild(noteContainer);
+                } else {
+                    // 如果找不到container，则添加到body
+                    document.body.appendChild(noteContainer);
+                }
+            }
+        }
+        
+        // 页面加载时初始化语言和主题显示
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 保存页面原始内容
+            saveOriginalContent();
+            
+            // 初始化语言配置
+            await initializeTranslations();
             
             // 设置下拉框的选中项
             // 默认设置为'auto'模式，除非明确保存了其他语言偏好
@@ -238,6 +87,9 @@
             
             // 初始化主题显示
             initThemeDisplay();
+            
+            // 初始化时检查语言并添加标注
+            addAITranslationNote();
         });
         
         // 处理语言选择变化
@@ -425,13 +277,14 @@
 
         /* 容器样式 */
         .container {
-            max-width: 600px;
+            max-width: 900px;
             width: 100%;
             background: var(--container-bg);
             padding: 3rem;
             border-radius: 16px;
             box-shadow: var(--container-shadow);
             transition: box-shadow var(--transition-speed) ease;
+            position: relative;
         }
 
         /* 标题样式 */
@@ -532,24 +385,157 @@
             background-color: var(--copy-btn-active);
         }
 
-        /* 返回链接 */
-        .back-link {
-            display: inline-block;
-            margin-top: 1.5rem;
-            color: white;
-            background: var(--back-btn-gradient);
-            padding: 0.75rem 1.5rem;
-            border-radius: 30px;
+        /* 返回按钮 */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: var(--border-color);
+            background: none;
+            border: none;
             text-decoration: none;
             font-weight: 500;
-            transition: background var(--transition-speed) ease, transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-            box-shadow: var(--back-btn-shadow);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color var(--transition-speed) ease;
+            padding: 8px 12px;
+            border-radius: 6px;
         }
 
-        .back-link:hover {
-            background: var(--back-btn-hover-gradient);
+        .back-btn:hover {
+            color: var(--border-hover-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        /* 自我介绍区域 */
+        .intro-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .intro-content {
+            flex: 1;
+        }
+
+        .intro-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .intro-text {
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* 联系方式卡片区域 */
+        .contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-card {
+            background: var(--container-bg);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-card:hover {
             transform: translateY(-2px);
-            box-shadow: var(--back-btn-hover-shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--border-color);
+        }
+
+        .contact-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .contact-card-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--border-color);
+            border-radius: 2px;
+            margin-right: 0.75rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .contact-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 50%;
+            color: var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-weight: 500;
+            color: var(--text-color);
+            margin-right: 0.5rem;
+        }
+
+        .contact-value {
+            color: var(--border-color);
+            text-decoration: none;
+        }
+
+        .contact-value:hover {
+            text-decoration: underline;
         }
 
         /* 响应式设计 */
@@ -562,6 +548,24 @@
             h1 {
                 font-size: 1.75rem;
             }
+            
+            .intro-section {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                font-size: 0.9rem;
+                padding: 6px 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -572,10 +576,36 @@
             h1 {
                 font-size: 1.5rem;
             }
-
-            .back-link {
-                padding: 0.6rem 1.2rem;
-                font-size: 0.9rem;
+            
+            .intro-section {
+                padding: 1rem;
+            }
+            
+            .avatar {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .intro-title {
+                font-size: 1.2rem;
+            }
+            
+            .contact-card {
+                padding: 1rem;
+            }
+            
+            .contact-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .back-btn {
+                top: 10px;
+                left: 10px;
+                font-size: 0.85rem;
+                padding: 5px 8px;
             }
         }
     </style>
@@ -624,23 +654,80 @@
     </button>
     
     <div class="container">
-        <h1 id="main-heading">关于</h1>
-        <div class="contact-section">
-            <div class="contact-title" id="contact-title-1">联系方式</div>
-            <ul class="contact-list">
-                <li>
-                    <span id="email-text">邮箱：</span><a href="mailto:1622599755@qq.com" class="contact-link">1622599755@qq.com</a>
-                    <button id="copy-email-btn" class="copy-btn" onclick="copyToClipboard('email')">复制</button>
-                    <span id="email" style="display: none;">1622599755@qq.com</span>
-                </li>
+        <!-- 返回按钮 -->
+        <button class="back-btn" onclick="window.location.href='../index.html'" data-translate-key="back_btn">
+            &lt; 返回
+        </button>
+        
+        <h1 id="main-heading" data-translate-key="page_title">关于</h1>
+        
+        <!-- 自我介绍区域 -->
+        <div class="intro-section">
+            <div class="avatar">
+                <img src="../asserts/avator.png" alt="DPCau" class="avatar-img">
+            </div>
+            <div class="intro-content">
+                <div class="intro-title" data-translate-key="intro_title">DPCau</div>
+                <div class="intro-text" data-translate-key="intro_text">
+                    有待填写
+                </div>
+            </div>
+        </div>
+        
+        <!-- 联系方式卡片区域 -->
+        <div class="contact-cards">
+            <!-- 邮箱卡片 -->
+            <div class="contact-card">
+                <div class="contact-card-title" id="contact-title-1" data-translate-key="contact_title">联系方式</div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div class="contact-details">
+                            <span class="contact-label" id="email-text" data-translate-key="email_label">邮箱：</span>
+                            <a href="mailto:1622599755@qq.com" class="contact-value">1622599755@qq.com</a>
+                            <button id="copy-email-btn" class="copy-btn" onclick="copyToClipboard('email')" data-translate-key="copy_btn">复制</button>
+                            <span id="email" style="display: none;">1622599755@qq.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GitHub卡片 -->
+            <div class="contact-card">
+                <div class="contact-card-title" id="github-title" data-translate-key="github_title">GitHub主页</div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">💻</div>
+                        <div class="contact-details">
+                            <span class="contact-label" id="github-text" data-translate-key="github_label">GitHub：</span>
+                            <a href="https://github.com/DPCau" target="_blank" class="contact-value">github.com/DPCau</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
                 <script>
                     function copyToClipboard(elementId) {
                         const text = document.getElementById(elementId).textContent;
                         navigator.clipboard.writeText(text).then(() => {
                             const button = document.querySelector('.copy-btn');
                             const lang = getCurrentLanguage();
-                            const originalText = translations[lang]['copy_btn'];
-                            button.textContent = translations[lang]['copied_btn'];
+                            
+                            // 获取翻译文本
+                            let originalText = '复制';
+                            let copiedText = '已复制!';
+                            
+                            if (lang === 'zh') {
+                                // 简体中文使用页面原始内容
+                                originalText = '复制';
+                                copiedText = '已复制!';
+                            } else if (translations[lang]) {
+                                // 其他语言使用翻译文件
+                                originalText = translations[lang]['copy_btn'] || 'Copy';
+                                copiedText = translations[lang]['copied_btn'] || 'Copied!';
+                            }
+                            
+                            button.textContent = copiedText;
                             button.style.backgroundColor = '#2ecc71';
                             setTimeout(() => {
                                 button.textContent = originalText;
@@ -651,95 +738,10 @@
                         });
                     }
                     
-                    // 系统主题变化监听
-        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        darkModeMediaQuery.addEventListener('change', updateThemeBySystem);
-        
-        // 更新主题显示
-        function updateThemeDisplay(theme) {
-            const sunIcon = document.querySelector('.sun-icon');
-            const moonIcon = document.querySelector('.moon-icon');
-            const autoIcon = document.querySelector('.auto-icon');
-            
-            // 移除所有活动状态
-            sunIcon.classList.remove('active');
-            moonIcon.classList.remove('active');
-            autoIcon.classList.remove('active');
-            
-            // 添加当前主题活动状态
-            if (theme === 'light') {
-                sunIcon.classList.add('active');
-            } else if (theme === 'dark') {
-                moonIcon.classList.add('active');
-            } else if (theme === 'auto') {
-                autoIcon.classList.add('active');
-            }
-        }
-        
-        // 根据系统设置更新主题
-        function updateThemeBySystem() {
-            const savedTheme = localStorage.getItem('theme');
-            
-            // 只有在自动模式下才跟随系统变化
-            if (savedTheme === 'auto' || !savedTheme) {
-                const prefersDark = darkModeMediaQuery.matches;
-                const html = document.documentElement;
-                
-                if (prefersDark) {
-                    html.classList.remove('light-theme');
-                    html.classList.add('dark-theme');
-                } else {
-                    html.classList.remove('dark-theme');
-                    html.classList.add('light-theme');
-                }
-            }
-        }
-        
-        // 初始化主题显示
-        function initThemeDisplay() {
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme === 'light' || savedTheme === 'dark') {
-                updateThemeDisplay(savedTheme);
-            } else {
-                // 默认显示自动模式
-                updateThemeDisplay('auto');
-            }
-        }
-        
-        // 主题切换功能
+                    // 主题切换功能
         document.getElementById('themeToggle').addEventListener('click', function() {
-            const html = document.documentElement;
-            const savedTheme = localStorage.getItem('theme');
-            let nextTheme;
-            
-            // 循环切换：自动 -> 亮色 -> 暗色 -> 自动
-            if (savedTheme === 'light') {
-                nextTheme = 'dark';
-                html.classList.remove('light-theme');
-                html.classList.add('dark-theme');
-                // 保存主题偏好
-                localStorage.setItem('theme', nextTheme);
-            } else if (savedTheme === 'dark') {
-                nextTheme = 'auto';
-                // 保存主题偏好
-                localStorage.setItem('theme', nextTheme);
-                // 在自动模式下，根据系统设置更新主题
-                updateThemeBySystem();
-            } else {
-                nextTheme = 'light';
-                html.classList.remove('dark-theme');
-                html.classList.add('light-theme');
-                // 保存主题偏好
-                localStorage.setItem('theme', nextTheme);
-            }
-            
-            // 更新主题显示
-            updateThemeDisplay(nextTheme);
+            toggleTheme();
         });
-        
-        // 初始化主题显示
-        initThemeDisplay();
         
         // 添加AI翻译标注（仅在非中文模式下显示）
         function addAITranslationNote() {
@@ -799,13 +801,7 @@
             });
         }
                 </script>
-            </ul>
-            <div class="contact-title" id="github-title">github主页</div>
-            <ul class="contact-list">
-                <li><span id="github-text">GitHub：</span><a href="https://github.com/DPCau" target="_blank" class="contact-link">github.com/DPCau</a></li>
-            </ul>
-        </div>
-        <a href="../index.html" class="back-link" id="back-link">返回</a>
+    </div>
     </div>
 </body>
 </html>
