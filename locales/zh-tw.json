@@ -43,5 +43,9 @@
     "internal_links": "站內鏈接",
     "external_links": "外部鏈接",
     "page_prev": "上一頁",
-    "page_next": "下一頁"
+    "page_next": "下一頁",
+    "search_placeholder": "搜尋卡片...",
+    "search_btn": "搜尋",
+    "clear_search_btn": "清除",
+    "search_results": "找到 {count} 個結果"
 }

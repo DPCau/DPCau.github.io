@@ -254,6 +254,9 @@ function applyTranslation(lang) {
             });
         }
         
+        // 更新搜索框占位符
+        updateSearchPlaceholder();
+        
         // 更新下拉选择框选项文本
         const languageSelect = document.getElementById('language-select');
         if (languageSelect) {
@@ -262,6 +265,8 @@ function applyTranslation(lang) {
             const systemLangName = systemLang === 'zh' ? '简体中文' : 
                                  systemLang === 'zh-tw' ? '繁體中文' : 
                                  'English';
+                                 
+            languageSelect.options[0].text = (translations[lang] && translations[lang]['auto_language']) ? translations[lang]['auto_language'] : '自动' + "("+systemLangName+")";
             
             // 保持当前选中的语言不变
             const currentValue = languageSelect.value;
@@ -301,6 +306,9 @@ function applyTranslation(lang) {
             document.title = translation['page_title'] || defaultTitle;
         }
         
+        // 更新搜索框占位符
+        updateSearchPlaceholder();
+        
         // 更新下拉选择框选项文本
         const languageSelect = document.getElementById('language-select');
         if (languageSelect) {
@@ -309,6 +317,9 @@ function applyTranslation(lang) {
             const systemLangName = systemLang === 'zh' ? (translation['language_zh'] || '简体中文') : 
                                  systemLang === 'zh-tw' ? (translation['language_zh_tw'] || '繁體中文') : 
                                  (translation['language_en'] || 'English');
+            
+            // 设置"自动"选项文本
+            languageSelect.options[0].text = (translation['auto_language'] ? translation['auto_language'] : '自动') + "("+systemLangName+")";
             
             // 保持当前选中的语言不变
             const currentValue = languageSelect.value;

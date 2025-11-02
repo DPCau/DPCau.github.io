@@ -43,5 +43,9 @@
     "internal_links": "Internal Links",
     "external_links": "External Links",
     "page_prev": "Previous",
-    "page_next": "Next"
+    "page_next": "Next",
+    "search_placeholder": "Search cards...",
+    "search_btn": "Search",
+    "clear_search_btn": "Clear",
+    "search_results": "Found {count} result{count !== 1 ? 's' : ''}"
 }

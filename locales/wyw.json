@@ -43,5 +43,9 @@
     "internal_links": "內鏈",
     "external_links": "外鏈",
     "page_prev": "前頁",
-    "page_next": "後頁"
+    "page_next": "後頁",
+    "search_placeholder": "索卡...",
+    "search_btn": "索",
+    "clear_search_btn": "除",
+    "search_results": "得 {count} 個果"
 }
