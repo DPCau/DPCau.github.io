@@ -1,5 +1,5 @@
 {
-    "page_title": "發址頁",
+    "page_title_index": "發址頁",
     "personal_page": "個家之址：",
     "enter_page": "入頁",
     "cloud_disk": "網盤之址：",
@@ -32,6 +32,7 @@
     "admission_info_desc": "外址之鏈，非吾之營，僅參",
     "mc_server_desc": "吾之MC槽",
     "server_status": "暫閉",
+    "page_title_about": "關於",
     "intro_title": "DPCau",
     "intro_text": "待寫",
     "contact_title": "信址",

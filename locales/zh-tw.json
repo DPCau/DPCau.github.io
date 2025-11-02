@@ -1,5 +1,5 @@
 {
-    "page_title": "地址發佈頁",
+    "page_title_index": "地址發佈頁",
     "personal_page": "個人主頁：",
     "enter_page": "進入主頁",
     "cloud_disk": "網盤地址：",
@@ -32,6 +32,7 @@
     "admission_info_desc": "鏈接外部網址，非本站運營內容，僅做參考",
     "mc_server_desc": "我的Minecraft伺服器",
     "server_status": "暫時關閉",
+    "page_title_about": "關於",
     "intro_title": "DPCau",
     "intro_text": "有待填寫",
     "contact_title": "聯繫方式",

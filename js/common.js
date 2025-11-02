@@ -226,7 +226,17 @@ function applyTranslation(lang) {
     if (lang === 'zh') {
         // 恢复页面原始内容
         if (Object.keys(originalContent).length > 0) {
-            document.title = originalContent.pageTitle;
+            // 恢复页面标题（通过data-translate-key属性）
+            const titleElement = document.querySelector('title[data-translate-key]');
+            if (titleElement) {
+                const key = titleElement.getAttribute('data-translate-key');
+                if (originalContent[key] !== undefined) {
+                    document.title = originalContent[key];
+                }
+            } else {
+                // 兼容旧版本：直接使用pageTitle
+                document.title = originalContent.pageTitle;
+            }
             
             // 自动恢复所有带有data-translate-key属性的元素
             const elements = document.querySelectorAll('[data-translate-key]');
@@ -278,9 +288,18 @@ function applyTranslation(lang) {
             }
         });
         
-        // 特殊处理页面标题
-        const defaultTitle = window.location.pathname.includes('/pages/') ? '关于 About' : '地址发布页 Address Page';
-        document.title = translation['page_title'] || defaultTitle;
+        // 特殊处理页面标题（通过data-translate-key属性）
+        const titleElement = document.querySelector('title[data-translate-key]');
+        if (titleElement) {
+            const key = titleElement.getAttribute('data-translate-key');
+            if (translation[key] !== undefined) {
+                document.title = translation[key];
+            }
+        } else {
+            // 兼容旧版本：使用硬编码的页面标题逻辑
+            const defaultTitle = window.location.pathname.includes('/pages/') ? '关于 About' : '地址发布页 Address Page';
+            document.title = translation['page_title'] || defaultTitle;
+        }
         
         // 更新下拉选择框选项文本
         const languageSelect = document.getElementById('language-select');
@@ -341,9 +360,17 @@ function adjustLanguageSelectWidth() {
 
 // 保存页面原始内容
 function saveOriginalContent() {
-    originalContent = {
-        pageTitle: document.title
-    };
+    originalContent = {};
+    
+    // 保存页面标题（通过data-translate-key属性）
+    const titleElement = document.querySelector('title[data-translate-key]');
+    if (titleElement) {
+        const key = titleElement.getAttribute('data-translate-key');
+        originalContent[key] = document.title;
+    } else {
+        // 兼容旧版本：直接保存pageTitle
+        originalContent.pageTitle = document.title;
+    }
     
     // 自动保存所有带有data-translate-key属性的元素的原始内容
     const elements = document.querySelectorAll('[data-translate-key]');

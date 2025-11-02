@@ -1,5 +1,5 @@
 {
-    "page_title": "Address Page",
+    "page_title_index": "Address Page",
     "personal_page": "Personal Page: ",
     "enter_page": "Enter",
     "cloud_disk": "Cloud Disk: ",
@@ -36,6 +36,7 @@
     "intro_text": "To be filled",
     "contact_title": "Contact Information",
     "github_title": "GitHub Page",
+    "page_title_about": "About",
     "back_btn": "<Back",
     "email_label": "Email:",
     "github_label": "GitHub:"
