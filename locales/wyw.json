@@ -39,5 +39,9 @@
     "github_title": "GitHub頁",
     "back_btn": "<返",
     "email_label": "郵：",
-    "github_label": "GitHub："
+    "github_label": "GitHub：",
+    "internal_links": "內鏈",
+    "external_links": "外鏈",
+    "page_prev": "前頁",
+    "page_next": "後頁"
 }

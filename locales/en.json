@@ -39,5 +39,9 @@
     "page_title_about": "About",
     "back_btn": "<Back",
     "email_label": "Email:",
-    "github_label": "GitHub:"
+    "github_label": "GitHub:",
+    "internal_links": "Internal Links",
+    "external_links": "External Links",
+    "page_prev": "Previous",
+    "page_next": "Next"
 }

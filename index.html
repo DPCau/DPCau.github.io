@@ -51,10 +51,13 @@
         :root {
             --bg-color: #f0f2f5;
             --text-color: #333;
+            --text-color-secondary: #666;
             --container-bg: white;
             --container-shadow: 0 4px 20px rgba(0,0,0,0.08);
             --heading-color: #2c3e50;
             --border-color: #3498db;
+            --primary-color: #3498db;
+            --hover-bg: #f8f9fa;
             --link-section-bg: #f8f9fa;
             --link-color: #3498db;
             --link-hover-color: #2980b9;
@@ -72,9 +75,13 @@
         .dark-theme {
             --bg-color: #1a1a1a;
             --text-color: #e0e0e0;
+            --text-color-secondary: #b0b0b0;
             --container-bg: #2d2d2d;
             --container-shadow: 0 4px 20px rgba(0,0,0,0.3);
             --heading-color: #e0e0e0;
+            --border-color: #64b5f6;
+            --primary-color: #64b5f6;
+            --hover-bg: #3d3d3d;
             --link-section-bg: #3d3d3d;
             --link-color: #64b5f6;
             --link-hover-color: #90caf9;
@@ -263,9 +270,67 @@
         /* 小卡片网格布局 */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 350px));
             gap: 1.5rem;
             margin-bottom: 2rem;
+            justify-content: start;
+        }
+        
+        /* 卡片分组样式 */
+        .card-group {
+            margin-bottom: 3rem;
+        }
+        
+        .group-title {
+            color: var(--heading-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            transition: color var(--transition-speed);
+        }
+        
+        /* 分页器样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .pagination-btn {
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            color: var(--text-color);
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--hover-bg);
+            border-color: var(--primary-color);
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .pagination-info {
+            color: var(--text-color-secondary);
+            font-size: 0.9rem;
+            margin: 0 1rem;
         }
         
         .small-card {
@@ -430,6 +495,29 @@
             .cards-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
+                justify-content: center;
+            }
+            
+            .group-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                margin-top: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .pagination-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .pagination-info {
+                font-size: 0.8rem;
+                margin: 0 0.5rem;
             }
             
             .main-card {
@@ -529,81 +617,90 @@
             </div>
         </div>
         
-        <!-- 小卡片网格 -->
-        <div class="cards-grid">
-            <!-- 网盘卡片 -->
-            <div class="small-card">
-                <div class="card-header">
-                    <div class="card-icon">☁️</div>
-                    <h3 class="card-title" id="cloud-disk-text" data-translate-key="cloud_disk">网盘地址</h3>
-                </div>
-                <div class="card-content">
-                    <p data-translate-key="cloud_disk_desc">私有的云存储空间</p>
-                    <p id="disk-note" data-translate-key="disk_note">（首次进入可能加载较久）</p>
-                </div>
-                <div class="card-actions">
-                    <a href="http://ct-chmlfrp.220715.xyz:55212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
-                    <a href="https://shpyqj-rmlnoa-5212.app.cloudstudio.work/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a>
-                </div>
-            </div>
-            
-            <!-- Tail Chat卡片 -->
-            <div class="small-card">
-                <div class="card-header">
-                    <div class="card-icon">💬</div>
-                    <h3 class="card-title" id="tail-chat-text" data-translate-key="tail_chat">Tail Chat私有聊天平台</h3>
-                </div>
-                <div class="card-content">
-                    <p data-translate-key="tail_chat_desc">私有聊天平台，实时交流沟通</p>
-                </div>
-                <div class="card-actions">
-                    <a href="http://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank" class="card-link" data-translate-key="enter_tail_chat">进入Tail Chat</a>
-                </div>
-            </div>
-            
-            <!-- 网络安全复习卡片 -->
-            <div class="small-card">
-                <div class="card-header">
-                    <div class="card-icon">📚</div>
-                    <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
-                </div>
-                <div class="card-content">
-                    <p data-translate-key="network_security_desc">公开的复习资料</p>
-                </div>
-                <div class="card-actions">
-                    <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
-                </div>
-            </div>
-            
-            <!-- 保研信息卡片 -->
-            <div class="small-card">
-                <div class="card-header">
-                    <div class="card-icon">🎓</div>
-                    <h3 class="card-title" id="uestc-open-admission-info" data-translate-key="uestc_open_admission_info">电子科技大学历年保研信息</h3>
-                </div>
-                <div class="card-content">
-                    <p data-translate-key="admission_info_desc">链接外部网址，非本站运营内容，仅做参考</p>
-                </div>
-                <div class="card-actions">
-                    <a href="https://uestc.fuck.sylu.net/" id="enter-uestc-open-admission-info" target="_blank" class="card-link" data-translate-key="enter_uestc_open_admission_info">进入</a>
-                </div>
-            </div>
-            
-            <!-- MC服务器卡片 -->
-            <div class="small-card">
-                <div class="card-header">
-                    <div class="card-icon">🎮</div>
-                    <h3 class="card-title" id="mc-server-text" data-translate-key="mc_server">MC服务器(JAVA 1.21.6)</h3>
-                </div>
-                <div class="card-content">
-                    <p data-translate-key="mc_server_desc">我的Minecraft服务器</p>
-                    <div class="server-address">
-                        <span id="server-ip" data-translate-key="server_status">暂时关闭</span>
+        <!-- 站内链接分组 -->
+        <div class="card-group">
+            <h2 class="group-title" data-translate-key="internal_links">站内链接</h2>
+            <div class="cards-grid">
+                <!-- 网盘卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">☁️</div>
+                        <h3 class="card-title" id="cloud-disk-text" data-translate-key="cloud_disk">网盘地址</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="cloud_disk_desc">私有的云存储空间</p>
+                        <p id="disk-note" data-translate-key="disk_note">（首次进入可能加载较久）</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="http://ct-chmlfrp.220715.xyz:55212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
+                        <a href="https://shpyqj-rmlnoa-5212.app.cloudstudio.work/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a>
                     </div>
                 </div>
-                <!-- <div class="card-actions">
-                    <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制</button>
-                </div> -->
+                
+                <!-- Tail Chat卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">💬</div>
+                        <h3 class="card-title" id="tail-chat-text" data-translate-key="tail_chat">Tail Chat私有聊天平台</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="tail_chat_desc">私有聊天平台，实时交流沟通</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="http://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank" class="card-link" data-translate-key="enter_tail_chat">进入Tail Chat</a>
+                    </div>
+                </div>
+                
+                <!-- 网络安全复习卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">📚</div>
+                        <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="network_security_desc">公开的复习资料</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
+                    </div>
+                </div>
+                
+                <!-- MC服务器卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">�</div>
+                        <h3 class="card-title" id="mc-server-text" data-translate-key="mc_server">MC服务器(JAVA 1.21.6)</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="mc_server_desc">我的Minecraft服务器</p>
+                        <div class="server-address">
+                            <span id="server-ip" data-translate-key="server_status">暂时关闭</span>
+                        </div>
+                    </div>
+                    <!-- <div class="card-actions">
+                        <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 外部链接分组 -->
+        <div class="card-group">
+            <h2 class="group-title" data-translate-key="external_links">外部链接</h2>
+            <div class="cards-grid">
+                <!-- 保研信息卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">�</div>
+                        <h3 class="card-title" id="uestc-open-admission-info" data-translate-key="uestc_open_admission_info">电子科技大学历年保研信息</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="admission_info_desc">链接外部网址，非本站运营内容，仅做参考</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://uestc.fuck.sylu.net/" id="enter-uestc-open-admission-info" target="_blank" class="card-link" data-translate-key="enter_uestc_open_admission_info">进入</a>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -690,6 +787,164 @@
                 updateThemeDisplay('auto');
             }
         }
+        
+        // 分页功能
+        const MAX_ROWS_PER_PAGE = 2; // 每页最多显示2行卡片
+        let currentPage = {}; // 存储每个分组的当前页码
+        
+        // 初始化分页功能
+        function initPagination() {
+            const cardGroups = document.querySelectorAll('.card-group');
+            
+            cardGroups.forEach((group, index) => {
+                const cardsGrid = group.querySelector('.cards-grid');
+                const cards = cardsGrid.querySelectorAll('.small-card');
+                
+                // 计算每行可以显示的卡片数量
+                const gridStyle = window.getComputedStyle(cardsGrid);
+                const gridTemplateColumns = gridStyle.gridTemplateColumns;
+                const columnsCount = gridTemplateColumns.split(' ').length;
+                
+                // 计算总页数
+                const totalCards = cards.length;
+                const cardsPerPage = MAX_ROWS_PER_PAGE * columnsCount;
+                const totalPages = Math.ceil(totalCards / cardsPerPage);
+                
+                // 初始化当前页码
+                currentPage[`group-${index}`] = 1;
+                
+                // 如果卡片数量超过一页，添加分页器
+                if (totalPages > 1) {
+                    createPagination(group, index, totalPages);
+                    updateCardVisibility(group, index, cardsPerPage);
+                }
+            });
+        }
+        
+        // 创建分页器
+        function createPagination(group, groupIndex, totalPages) {
+            const pagination = document.createElement('div');
+            pagination.className = 'pagination';
+            
+            // 上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.setAttribute('data-translate-key', 'page_prev');
+            prevBtn.textContent = '<';
+            prevBtn.onclick = () => changePage(groupIndex, currentPage[`group-${groupIndex}`] - 1);
+            
+            // 页码按钮
+            const pageInfo = document.createElement('span');
+            pageInfo.className = 'pagination-info';
+            
+            // 下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.setAttribute('data-translate-key', 'page_next');
+            nextBtn.textContent = '>';
+            nextBtn.onclick = () => changePage(groupIndex, currentPage[`group-${groupIndex}`] + 1);
+            
+            pagination.appendChild(prevBtn);
+            pagination.appendChild(pageInfo);
+            pagination.appendChild(nextBtn);
+            
+            // 将分页器插入到卡片网格之后
+            const cardsGrid = group.querySelector('.cards-grid');
+            cardsGrid.parentNode.insertBefore(pagination, cardsGrid.nextSibling);
+            
+            // 更新分页器显示
+            updatePaginationDisplay(groupIndex, totalPages);
+        }
+        
+        // 切换页面
+        function changePage(groupIndex, newPage) {
+            const group = document.querySelectorAll('.card-group')[groupIndex];
+            const cardsGrid = group.querySelector('.cards-grid');
+            const cards = cardsGrid.querySelectorAll('.small-card');
+            
+            // 计算每行可以显示的卡片数量
+            const gridStyle = window.getComputedStyle(cardsGrid);
+            const gridTemplateColumns = gridStyle.gridTemplateColumns;
+            const columnsCount = gridTemplateColumns.split(' ').length;
+            const cardsPerPage = MAX_ROWS_PER_PAGE * columnsCount;
+            
+            // 计算总页数
+            const totalCards = cards.length;
+            const totalPages = Math.ceil(totalCards / cardsPerPage);
+            
+            // 验证页码范围
+            if (newPage < 1) newPage = 1;
+            if (newPage > totalPages) newPage = totalPages;
+            
+            // 更新当前页码
+            currentPage[`group-${groupIndex}`] = newPage;
+            
+            // 更新卡片可见性和分页器显示
+            updateCardVisibility(group, groupIndex, cardsPerPage);
+            updatePaginationDisplay(groupIndex, totalPages);
+        }
+        
+        // 更新卡片可见性
+        function updateCardVisibility(group, groupIndex, cardsPerPage) {
+            const cardsGrid = group.querySelector('.cards-grid');
+            const cards = cardsGrid.querySelectorAll('.small-card');
+            const currentPageNum = currentPage[`group-${groupIndex}`];
+            
+            cards.forEach((card, index) => {
+                const startIndex = (currentPageNum - 1) * cardsPerPage;
+                const endIndex = startIndex + cardsPerPage;
+                
+                if (index >= startIndex && index < endIndex) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // 更新分页器显示
+        function updatePaginationDisplay(groupIndex, totalPages) {
+            const group = document.querySelectorAll('.card-group')[groupIndex];
+            const pagination = group.querySelector('.pagination');
+            if (!pagination) return;
+            
+            const currentPageNum = currentPage[`group-${groupIndex}`];
+            const prevBtn = pagination.querySelector('.pagination-btn:nth-child(1)');
+            const pageInfo = pagination.querySelector('.pagination-info');
+            const nextBtn = pagination.querySelector('.pagination-btn:nth-child(3)');
+            
+            // 更新按钮状态
+            prevBtn.disabled = currentPageNum === 1;
+            nextBtn.disabled = currentPageNum === totalPages;
+            
+            // 更新页码信息
+            pageInfo.textContent = `${currentPageNum} / ${totalPages}`;
+        }
+        
+        // 窗口大小变化时重新初始化分页
+        window.addEventListener('resize', function() {
+            // 防抖处理，避免频繁触发
+            clearTimeout(this.resizeTimer);
+            this.resizeTimer = setTimeout(() => {
+                // 移除所有分页器
+                document.querySelectorAll('.pagination').forEach(pagination => {
+                    pagination.remove();
+                });
+                
+                // 显示所有卡片
+                document.querySelectorAll('.small-card').forEach(card => {
+                    card.style.display = 'block';
+                });
+                
+                // 重新初始化分页
+                initPagination();
+            }, 250);
+        });
+        
+        // 页面加载完成后初始化分页
+        document.addEventListener('DOMContentLoaded', function() {
+            initPagination();
+        });
         
         // 主题切换功能
         document.getElementById('themeToggle').addEventListener('click', function() {
