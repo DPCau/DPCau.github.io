@@ -47,5 +47,17 @@
     "search_placeholder": "搜尋卡片...",
     "search_btn": "搜尋",
     "clear_search_btn": "清除",
-    "search_results": "找到 {count} 個結果"
+    "search_results": "找到 {count} 個結果",
+    "blog": "博客",
+    "blog_desc": "個人博客文章",
+    "enter_blog": "進入博客",
+    "blog_list_title": "博客文章",
+    "blog_search_placeholder": "搜尋博客文章...",
+    "no_blogs_found": "未找到博客文章",
+    "read_more": "閱讀更多",
+    "back_to_blog": "<返回博客列表",
+    "blog_not_found": "未找到博客文章",
+    "loading": "載入中...",
+    "page_title_blog": "博客",
+    "page_title_blog_detail": "博客詳情"
 }

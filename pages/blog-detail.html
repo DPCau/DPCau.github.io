@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <script src="../js/common.js"></script>
+    <script>
+        // 在页面加载前就检查并应用主题，避免闪烁
+        (function() {
+            // 检查localStorage中的主题偏好
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // 设置初始主题类
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                // auto模式或没有保存的主题时，根据系统设置应用主题
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark-theme');
+                } else {
+                    document.documentElement.classList.add('light-theme');
+                }
+            }
+        })();
+    </script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page_title_blog_detail">博客详情</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        let currentPost = null;
+
+        // 页面特定的AI翻译标注函数实现
+        function addAITranslationNote() {
+            const currentLang = getCurrentLanguage();
+            if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
+                // 创建标注容器
+                const noteContainer = document.createElement('div');
+                noteContainer.id = 'translation-note';
+                noteContainer.style.cssText = 'text-align: center; margin-top: 1rem; margin-bottom: 2rem; color: #888; font-size: 0.8rem;';
+                
+                // 创建可点击的Chinese链接
+                const span1 = document.createElement('span');
+                span1.textContent = 'This page uses AI translation. Please refer to the original ';
+                
+                const chineseLink = document.createElement('span');
+                chineseLink.textContent = currentLang === 'en' ? 'Simplified Chinese' : '简体中文';
+                chineseLink.style.cssText = 'color: var(--border-color); cursor: pointer; text-decoration: underline;';
+                chineseLink.addEventListener('click', function() {
+                    changeLanguage('zh');
+                });
+                
+                const span2 = document.createElement('span');
+                span2.textContent = ' version for any discrepancies.';
+                
+                // 组合元素
+                noteContainer.appendChild(span1);
+                noteContainer.appendChild(chineseLink);
+                noteContainer.appendChild(span2);
+                
+                // 添加到body中，但确保在卡片外部
+                document.body.appendChild(noteContainer);
+            }
+        }
+
+        // 从URL参数获取博客文件名
+        function getBlogPostFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('post');
+        }
+
+        // 加载并显示博客文章
+        async function loadBlogPost() {
+            const postFilename = getBlogPostFromURL();
+            
+            if (!postFilename) {
+                showError('未指定博客文章');
+                return;
+            }
+
+            try {
+                const response = await fetch(`../blog/${postFilename}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const content = await response.text();
+                currentPost = parseBlogPost(postFilename, content);
+                
+                if (!currentPost) {
+                    throw new Error('无法解析博客文章');
+                }
+                
+                renderBlogPost();
+                
+            } catch (error) {
+                console.error('Error loading blog post:', error);
+                showError(`加载博客文章失败: ${error.message}`);
+            }
+        }
+
+        // 解析博客文件
+        function parseBlogPost(filename, content) {
+            // 从文件名解析日期和标题
+            const match = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)\.md$/);
+            if (!match) {
+                return null;
+            }
+
+            const [, dateStr, titleFromFilename] = match;
+            
+            // 从内容中提取标题（第一行的#标题）
+            let title = titleFromFilename;
+
+            return {
+                filename,
+                title,
+                date: dateStr,
+                content
+            };
+        }
+
+        // 渲染博客文章
+        function renderBlogPost() {
+            if (!currentPost) return;
+
+            
+            // 更新文章标题
+            document.getElementById('article-title').textContent = currentPost.title;
+            
+            // 更新文章日期
+            document.getElementById('article-date').textContent = currentPost.date;
+            
+            // 渲染Markdown内容
+            const markdownContent = marked.parse(currentPost.content);
+            document.getElementById('article-content').innerHTML = markdownContent;
+            
+            // 隐藏加载状态
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('article').style.display = 'block';
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // 返回博客列表
+        function goBackToBlogList() {
+            window.location.href = 'blog.html';
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 保存页面原始内容
+            saveOriginalContent();
+            
+            // 初始化语言配置
+            await initializeTranslations();
+            
+            // 设置下拉框的选中项
+            const savedLang = localStorage.getItem('language');
+            document.getElementById('language-select').value = savedLang ? (savedLang === 'auto' ? 'auto' : savedLang) : 'auto';
+            
+            // 调整下拉框宽度
+            adjustLanguageSelectWidth();
+            
+            // 初始化主题显示
+            initThemeDisplay();
+            
+            // 加载博客文章
+            await loadBlogPost();
+            
+            // 初始化时检查语言并添加标注
+            addAITranslationNote();
+        });
+
+        // 处理语言选择变化
+        function handleLanguageChange(lang) {
+            if (['auto', 'zh', 'zh-tw', 'en', 'wyw'].includes(lang)) {
+                changeLanguage(lang);
+            }
+        }
+    </script>
+    <style>
+        /* 定义CSS变量 */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-color: #333;
+            --container-bg: white;
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --heading-color: #2c3e50;
+            --border-color: #3498db;
+            --border-hover-color: #2980b9;
+            --card-bg: white;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --button-bg: #3498db;
+            --button-hover: #2980b9;
+            --button-active: #1f6dad;
+            --code-bg: #f8f9fa;
+            --code-border: #e9ecef;
+            --blockquote-border: #3498db;
+            --blockquote-bg: rgba(52, 152, 219, 0.05);
+            --transition-speed: 0.3s;
+        }
+        
+        /* 暗黑模式变量 */
+        .dark-theme {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            --text-color: #e0e0e0;
+            --container-bg: #2d2d2d;
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            --heading-color: #e0e0e0;
+            --border-color: #64b5f6;
+            --border-hover-color: #90caf9;
+            --card-bg: #3d3d3d;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            --button-bg: #1e88e5;
+            --button-hover: #1976d2;
+            --button-active: #1565c0;
+            --code-bg: #404040;
+            --code-border: #555;
+            --blockquote-border: #64b5f6;
+            --blockquote-bg: rgba(100, 181, 246, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: all var(--transition-speed) ease;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* 加载和错误状态 */
+        #loading, #error {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-top: 2rem;
+        }
+
+        #loading {
+            color: var(--text-color);
+        }
+
+        #error {
+            display: none;
+            color: #e74c3c;
+        }
+
+        /* 文章样式 */
+        #article {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            margin-top: 1rem;
+        }
+
+        .article-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #article-title {
+            color: var(--heading-color);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        #article-date {
+            color: #000000;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        /* Markdown内容样式 */
+        #article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        #article-content h1,
+        #article-content h2,
+        #article-content h3,
+        #article-content h4,
+        #article-content h5,
+        #article-content h6 {
+            color: var(--heading-color);
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+        }
+
+        #article-content h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        #article-content h2 {
+            font-size: 1.6rem;
+        }
+
+        #article-content h3 {
+            font-size: 1.4rem;
+        }
+
+        #article-content h4 {
+            font-size: 1.2rem;
+        }
+
+        #article-content p {
+            margin: 1rem 0;
+        }
+
+        #article-content ul,
+        #article-content ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        #article-content li {
+            margin: 0.5rem 0;
+        }
+
+        #article-content blockquote {
+            border-left: 4px solid var(--blockquote-border);
+            background: var(--blockquote-bg);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        #article-content code {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        #article-content pre {
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        #article-content pre code {
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        #article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #article-content th,
+        #article-content td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--code-border);
+        }
+
+        #article-content th {
+            background: var(--code-bg);
+            font-weight: 600;
+            color: var(--heading-color);
+        }
+
+        #article-content a {
+            color: var(--border-color);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #article-content a:hover {
+            color: var(--border-hover-color);
+            border-bottom-color: var(--border-hover-color);
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(90deg, var(--button-bg), var(--button-hover));
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            transition: all var(--transition-speed) ease;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(90deg, var(--button-hover), var(--button-bg));
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* 语言切换和主题切换样式 */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 80px;
+            z-index: 1000;
+        }
+
+        .language-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--container-bg);
+            padding: 8px 12px;
+            border-radius: 25px;
+            box-shadow: var(--container-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .language-select-wrapper:hover {
+            box-shadow: var(--container-hover-shadow);
+        }
+
+        .language-icon {
+            font-size: 16px;
+        }
+
+        .language-select {
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .language-select-copy {
+            position: absolute;
+            visibility: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: transparent;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--container-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: var(--container-shadow);
+            transition: all var(--transition-speed) ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            box-shadow: var(--container-hover-shadow);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text-color);
+            display: none;
+        }
+
+        .theme-toggle .sun-icon.active,
+        .theme-toggle .moon-icon.active,
+        .theme-toggle .auto-icon.active {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            #article {
+                padding: 1.5rem;
+            }
+
+            #article-title {
+                font-size: 1.8rem;
+            }
+
+            #article-content {
+                font-size: 1rem;
+            }
+
+            #article-content h1 {
+                font-size: 1.6rem;
+            }
+
+            #article-content h2 {
+                font-size: 1.4rem;
+            }
+
+            #article-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .language-toggle {
+                top: 15px;
+                right: 70px;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            #article {
+                padding: 1rem;
+            }
+
+            #article-title {
+                font-size: 1.5rem;
+            }
+
+            .article-header {
+                padding-bottom: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #article-content pre {
+                padding: 1rem;
+                font-size: 0.85rem;
+            }
+
+            #article-content table {
+                font-size: 0.9rem;
+            }
+
+            #article-content th,
+            #article-content td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <div class="language-select-wrapper">
+            <span class="language-icon">🌐</span>
+            <select id="language-select" class="language-select" onchange="changeLanguage(this.value)">
+                <option value="auto">自动 (简体中文)</option>
+                <option value="zh">简体中文</option>
+                <option value="zh-tw">繁體中文</option>
+                <option value="en">English</option>
+                <option value="wyw">文言文</option>
+            </select>
+        </div>
+    </div>
+    
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auto-icon">
+            <circle cx="12" cy="12" r="5" opacity="0.3"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+            <path d="m9 9 4 4 2-2"></path>
+        </svg>
+    </button>
+
+    <!-- 返回按钮 -->
+    <button class="back-btn" onclick="goBackToBlogList()" data-translate-key="back_to_blog">
+        &lt; 返回博客列表
+    </button>
+
+    <div class="container">
+        <!-- 加载状态 -->
+        <div id="loading" data-translate-key="loading">
+            正在加载博客文章...
+        </div>
+
+        <!-- 错误状态 -->
+        <div id="error">
+            <h2 data-translate-key="error_title">加载失败</h2>
+            <p id="error-message"></p>
+            <button onclick="goBackToBlogList()" class="back-btn" style="position: static; margin-top: 1rem;" data-translate-key="back_to_blog">
+                &lt; 返回博客列表
+            </button>
+        </div>
+
+        <!-- 文章内容 -->
+        <article id="article">
+            <header class="article-header">
+                <h1 id="article-title"></h1>
+                <div id="article-date"></div>
+            </header>
+            <div id="article-content"></div>
+        </article>
+    </div>
+
+    <script>
+        // 主题切换功能
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            toggleTheme();
+        });
+
+        // 在语言切换时更新标注
+        document.getElementById('language-select').addEventListener('change', function() {
+            // 移除现有标注
+            const existingNote = document.getElementById('translation-note');
+            if (existingNote) {
+                existingNote.remove();
+            }
+            // 添加新标注
+            addAITranslationNote();
+        });
+    </script>
+</body>
+</html>

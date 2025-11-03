@@ -47,5 +47,17 @@
     "search_placeholder": "索卡...",
     "search_btn": "索",
     "clear_search_btn": "除",
-    "search_results": "得 {count} 個果"
+    "search_results": "得 {count} 個果",
+    "blog": "博記",
+    "blog_desc": "個人博記文章",
+    "enter_blog": "入博記",
+    "blog_list_title": "博記文章",
+    "blog_search_placeholder": "索博記文章...",
+    "no_blogs_found": "未得博記文章",
+    "read_more": "閱更",
+    "back_to_blog": "<返博記列",
+    "blog_not_found": "未得博記文章",
+    "loading": "載中...",
+    "page_title_blog": "博記",
+    "page_title_blog_detail": "博記詳"
 }

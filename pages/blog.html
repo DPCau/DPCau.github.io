@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <script src="../js/common.js"></script>
+    <script>
+        // 在页面加载前就检查并应用主题，避免闪烁
+        (function() {
+            // 检查localStorage中的主题偏好
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // 设置初始主题类
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark-theme');
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                // auto模式或没有保存的主题时，根据系统设置应用主题
+                if (prefersDark) {
+                    document.documentElement.classList.add('dark-theme');
+                } else {
+                    document.documentElement.classList.add('light-theme');
+                }
+            }
+        })();
+    </script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page_title_blog">博客</title>
+    <script>
+        // 博客数据
+        let blogPosts = [];
+        let filteredPosts = [];
+        let currentPage = 1;
+        const postsPerPage = 10;
+
+        // 页面特定的AI翻译标注函数实现
+        function addAITranslationNote() {
+            const currentLang = getCurrentLanguage();
+            if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
+                // 创建标注容器
+                const noteContainer = document.createElement('div');
+                noteContainer.id = 'translation-note';
+                noteContainer.style.cssText = 'text-align: center; margin-top: 1rem; margin-bottom: 2rem; color: #888; font-size: 0.8rem;';
+                
+                // 创建可点击的Chinese链接
+                const span1 = document.createElement('span');
+                span1.textContent = 'This page uses AI translation. Please refer to the original ';
+                
+                const chineseLink = document.createElement('span');
+                chineseLink.textContent = currentLang === 'en' ? 'Simplified Chinese' : '简体中文';
+                chineseLink.style.cssText = 'color: var(--border-color); cursor: pointer; text-decoration: underline;';
+                chineseLink.addEventListener('click', function() {
+                    changeLanguage('zh');
+                });
+                
+                const span2 = document.createElement('span');
+                span2.textContent = ' version for any discrepancies.';
+                
+                // 组合元素
+                noteContainer.appendChild(span1);
+                noteContainer.appendChild(chineseLink);
+                noteContainer.appendChild(span2);
+                
+                // 添加到body中，但确保在卡片外部
+                document.body.appendChild(noteContainer);
+            }
+        }
+
+        // 加载博客文件列表
+        async function loadBlogPosts() {
+            try {
+                // 这里我们需要手动定义博客文件列表，因为无法直接读取文件系统
+                const blogFiles = [
+                    '2025-11-03-第一篇测试贴.md',
+                ];
+
+                blogPosts = [];
+                
+                for (const filename of blogFiles) {
+                    try {
+                        const response = await fetch(`../blog/${filename}`);
+                        if (response.ok) {
+                            const content = await response.text();
+                            const post = parseBlogPost(filename, content);
+                            blogPosts.push(post);
+                        }
+                    } catch (error) {
+                        console.warn(`Failed to load blog post: ${filename}`, error);
+                    }
+                }
+
+                // 按日期排序（最新的在前）
+                blogPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+                filteredPosts = [...blogPosts];
+                
+                renderBlogList();
+                renderPagination();
+            } catch (error) {
+                console.error('Error loading blog posts:', error);
+            }
+        }
+
+        // 解析博客文件
+        function parseBlogPost(filename, content) {
+            // 从文件名解析日期和标题
+            const match = filename.match(/^(\d{4}-\d{2}-\d{2})-(.+)\.md$/);
+            if (!match) {
+                return null;
+            }
+
+            const [, dateStr, titleFromFilename] = match;
+            
+            // 从内容中提取标题（第一行的#标题）
+            const lines = content.split('\n');
+            let title = titleFromFilename;
+            let preview = '';
+            
+            const previewLines = [];
+            for (let j = 0; j < lines.length && previewLines.length < 3; j++) {
+                const previewLine = lines[j].trim();
+                if (previewLine) { // 只添加非空行
+                    previewLines.push(previewLine.replace(/^#+/, ''));
+                }
+            }
+            preview = previewLines.join(' ');
+
+            return {
+                filename,
+                title,
+                date: dateStr,
+                preview: preview || '',
+                content
+            };
+        }
+
+        // 渲染博客列表
+        function renderBlogList() {
+            const container = document.getElementById('blog-list');
+            container.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const currentPosts = filteredPosts.slice(startIndex, endIndex);
+
+            if (currentPosts.length === 0) {
+                container.innerHTML = '<div class="no-posts" data-translate-key="no_posts">暂无博客文章</div>';
+                return;
+            }
+
+            currentPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'blog-post-card';
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                        <span class="post-date">${post.date}</span>
+                    </div>
+                    <div class="post-preview">${escapeHtml(post.preview)}</div>
+                    <div class="post-actions">
+                        <button class="read-more-btn" onclick="viewBlogPost('${post.filename}')" data-translate-key="read_more">阅读全文</button>
+                    </div>
+                `;
+                container.appendChild(postElement);
+            });
+        }
+
+        // 渲染分页
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // 上一页按钮
+            if (currentPage > 1) {
+                paginationHTML += `<button class="page-btn" onclick="goToPage(${currentPage - 1})" data-translate-key="page_prev">上一页</button>`;
+            }
+
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === currentPage) {
+                    paginationHTML += `<button class="page-btn active">${i}</button>`;
+                } else {
+                    paginationHTML += `<button class="page-btn" onclick="goToPage(${i})">${i}</button>`;
+                }
+            }
+
+            // 下一页按钮
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="page-btn" onclick="goToPage(${currentPage + 1})" data-translate-key="page_next">下一页</button>`;
+            }
+
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        // 跳转到指定页面
+        function goToPage(page) {
+            currentPage = page;
+            renderBlogList();
+            renderPagination();
+        }
+
+        // 搜索功能
+        function performSearch(query) {
+            if (!query.trim()) {
+                filteredPosts = [...blogPosts];
+            } else {
+                filteredPosts = blogPosts.filter(post => 
+                    post.title.toLowerCase().includes(query.toLowerCase()) ||
+                    post.preview.toLowerCase().includes(query.toLowerCase())
+                );
+            }
+            
+            currentPage = 1;
+            renderBlogList();
+            renderPagination();
+            
+            // 更新搜索结果信息
+            const resultCount = filteredPosts.length;
+            const searchResultsInfo = document.getElementById('search-results-info');
+            if (query.trim()) {
+                const currentLang = getCurrentLanguage();
+                const resultText = getSearchResultText(resultCount, currentLang);
+                searchResultsInfo.textContent = resultText;
+            } else {
+                searchResultsInfo.textContent = '';
+            }
+        }
+
+        // 获取搜索结果文本
+        function getSearchResultText(count, lang) {
+            // 如果是简体中文，使用默认文本
+            if (lang === 'zh') {
+                return `找到 ${count} 个结果`;
+            }
+            
+            // 否则使用翻译文件中的文本
+            if (translations[lang] && translations[lang]['search_results']) {
+                // 获取翻译文本
+                let resultText = translations[lang]['search_results'];
+                
+                // 特殊处理英文复数形式
+                if (lang === 'en' && resultText.includes('{count !== 1 ? \'s\' : \'\'}')) {
+                    // 替换JavaScript表达式为正确的复数形式
+                    resultText = resultText.replace('{count !== 1 ? \'s\' : \'\'}', count !== 1 ? 's' : '');
+                }
+                
+                // 替换{count}占位符
+                return resultText.replace('{count}', count);
+            }
+            
+            // 如果没有找到翻译，使用英文默认值
+            return `Found ${count} result${count !== 1 ? 's' : ''}`;
+        }
+
+        // 更新搜索框占位符的翻译
+        function updateSearchPlaceholder() {
+            const searchInput = document.getElementById('search-input');
+            const currentLang = getCurrentLanguage();
+            
+            // 如果是简体中文，使用默认占位符
+            if (currentLang === 'zh') {
+                searchInput.placeholder = '搜索博客...';
+                return;
+            }
+            
+            // 否则使用翻译文件中的占位符
+            if (translations[currentLang] && translations[currentLang]['search_blog_placeholder']) {
+                searchInput.placeholder = translations[currentLang]['search_blog_placeholder'];
+            } else {
+                searchInput.placeholder = 'Search blogs...'; // 英文默认值
+            }
+        }
+
+        // 查看博客详情
+        function viewBlogPost(filename) {
+            window.location.href = `blog-detail.html?post=${encodeURIComponent(filename)}`;
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 保存页面原始内容
+            saveOriginalContent();
+            
+            // 初始化语言配置
+            await initializeTranslations();
+            
+            // 设置下拉框的选中项
+            const savedLang = localStorage.getItem('language');
+            document.getElementById('language-select').value = savedLang ? (savedLang === 'auto' ? 'auto' : savedLang) : 'auto';
+            
+            // 调整下拉框宽度
+            adjustLanguageSelectWidth();
+            
+            // 初始化主题显示
+            initThemeDisplay();
+            
+            // 初始化搜索功能
+            initSearch();
+            
+            // 加载博客文章
+            await loadBlogPosts();
+            
+            // 初始化时检查语言并添加标注
+            addAITranslationNote();
+        });
+
+        // 初始化搜索功能
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const clearSearchBtn = document.getElementById('clear-search-btn');
+            
+            // 应用搜索框占位符的翻译
+            updateSearchPlaceholder();
+            
+            // 搜索输入事件
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                // 显示或隐藏清除按钮
+                if (query) {
+                    clearSearchBtn.classList.add('visible');
+                } else {
+                    clearSearchBtn.classList.remove('visible');
+                }
+                
+                // 执行搜索
+                performSearch(query);
+            });
+            
+            // 清除搜索按钮点击事件
+            clearSearchBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                clearSearchBtn.classList.remove('visible');
+                performSearch('');
+            });
+            
+            // 回车键触发搜索
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    performSearch(query);
+                }
+            });
+        }
+
+        // 处理语言选择变化
+        function handleLanguageChange(lang) {
+            if (['auto', 'zh', 'zh-tw', 'en', 'wyw'].includes(lang)) {
+                changeLanguage(lang);
+            }
+        }
+    </script>
+    <style>
+        /* 定义CSS变量 */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-color: #333;
+            --container-bg: white;
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --heading-color: #2c3e50;
+            --border-color: #3498db;
+            --border-hover-color: #2980b9;
+            --card-bg: white;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --button-bg: #3498db;
+            --button-hover: #2980b9;
+            --button-active: #1f6dad;
+            --search-bg: #f8f9fa;
+            --search-border: #e9ecef;
+            --search-focus-border: #3498db;
+            --transition-speed: 0.3s;
+        }
+        
+        /* 暗黑模式变量 */
+        .dark-theme {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            --text-color: #e0e0e0;
+            --container-bg: #2d2d2d;
+            --container-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --container-hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            --heading-color: #e0e0e0;
+            --border-color: #64b5f6;
+            --border-hover-color: #90caf9;
+            --card-bg: #3d3d3d;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            --card-hover-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            --button-bg: #1e88e5;
+            --button-hover: #1976d2;
+            --button-active: #1565c0;
+            --search-bg: #404040;
+            --search-border: #555;
+            --search-focus-border: #64b5f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--heading-color);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        /* 搜索区域样式 */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid var(--search-border);
+            border-radius: 25px;
+            background: var(--search-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--search-focus-border);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        #clear-search-btn {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-speed) ease;
+        }
+
+        #clear-search-btn.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #clear-search-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+        }
+
+        #search-results-info {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* 博客列表样式 */
+        #blog-list {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .blog-post-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all var(--transition-speed) ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .blog-post-card:hover {
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-2px);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .post-title {
+            color: var(--heading-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+            flex: 1;
+        }
+
+        .post-date {
+            color: #000000;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .post-preview {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .read-more-btn {
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .read-more-btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-1px);
+        }
+
+        .read-more-btn:active {
+            background: var(--button-active);
+            transform: translateY(0);
+        }
+
+        /* 分页样式 */
+        #pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--search-border);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .page-btn:hover {
+            background: var(--button-bg);
+            color: white;
+            border-color: var(--button-bg);
+        }
+
+        .page-btn.active {
+            background: var(--button-bg);
+            color: white;
+            border-color: var(--button-bg);
+        }
+
+        /* 无文章提示 */
+        .no-posts {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            padding: 3rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(90deg, var(--button-bg), var(--button-hover));
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            transition: all var(--transition-speed) ease;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(90deg, var(--button-hover), var(--button-bg));
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* 语言切换和主题切换样式 */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 80px;
+            z-index: 1000;
+        }
+
+        .language-select-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--container-bg);
+            padding: 8px 12px;
+            border-radius: 25px;
+            box-shadow: var(--container-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .language-select-wrapper:hover {
+            box-shadow: var(--container-hover-shadow);
+        }
+
+        .language-icon {
+            font-size: 16px;
+        }
+
+        .language-select {
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            min-width: 120px;
+        }
+
+        .language-select-copy {
+            position: absolute;
+            visibility: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: transparent;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--container-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: var(--container-shadow);
+            transition: all var(--transition-speed) ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            box-shadow: var(--container-hover-shadow);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text-color);
+            display: none;
+        }
+
+        .theme-toggle .sun-icon.active,
+        .theme-toggle .moon-icon.active,
+        .theme-toggle .auto-icon.active {
+            display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .language-toggle {
+                top: 15px;
+                right: 70px;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+            }
+
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .blog-post-card {
+                padding: 1rem;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+
+            #pagination {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <div class="language-select-wrapper">
+            <span class="language-icon">🌐</span>
+            <select id="language-select" class="language-select" onchange="changeLanguage(this.value)">
+                <option value="auto">自动 (简体中文)</option>
+                <option value="zh">简体中文</option>
+                <option value="zh-tw">繁體中文</option>
+                <option value="en">English</option>
+                <option value="wyw">文言文</option>
+            </select>
+        </div>
+    </div>
+    
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auto-icon">
+            <circle cx="12" cy="12" r="5" opacity="0.3"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+            <path d="m9 9 4 4 2-2"></path>
+        </svg>
+    </button>
+
+    <!-- 返回按钮 -->
+    <button class="back-btn" onclick="window.location.href='../index.html'" data-translate-key="back_btn">
+        &lt; 返回
+    </button>
+
+    <div class="container">
+        <h1 id="main-heading" data-translate-key="page_title_blog">博客</h1>
+        
+        <!-- 搜索区域 -->
+        <div class="search-section">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" id="search-input" placeholder="搜索博客...">
+                    <button id="clear-search-btn" title="清除搜索">✕</button>
+                </div>
+                <div id="search-results-info"></div>
+            </div>
+        </div>
+
+        <!-- 博客列表 -->
+        <div id="blog-list"></div>
+
+        <!-- 分页 -->
+        <div id="pagination"></div>
+    </div>
+
+    <script>
+        // 主题切换功能
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            toggleTheme();
+        });
+
+        // 在语言切换时更新标注和搜索结果
+        document.getElementById('language-select').addEventListener('change', function() {
+            // 移除现有标注
+            const existingNote = document.getElementById('translation-note');
+            if (existingNote) {
+                existingNote.remove();
+            }
+            // 添加新标注
+            addAITranslationNote();
+            
+            // 更新搜索框占位符
+            updateSearchPlaceholder();
+            
+            // 如果当前有搜索查询，重新执行搜索以更新搜索结果信息
+            const searchInput = document.getElementById('search-input');
+            const query = searchInput.value.trim();
+            if (query) {
+                performSearch(query);
+            }
+        });
+    </script>
+</body>
+</html>

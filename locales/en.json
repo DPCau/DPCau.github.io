@@ -47,5 +47,17 @@
     "search_placeholder": "Search cards...",
     "search_btn": "Search",
     "clear_search_btn": "Clear",
-    "search_results": "Found {count} result{count !== 1 ? 's' : ''}"
+    "search_results": "Found {count} result{count !== 1 ? 's' : ''}",
+    "blog": "Blog",
+    "blog_desc": "Personal blog posts",
+    "enter_blog": "Enter Blog",
+    "blog_list_title": "Blog Posts",
+    "blog_search_placeholder": "Search blog posts...",
+    "no_blogs_found": "No blog posts found",
+    "read_more": "Read More",
+    "back_to_blog": "< Back to Blog List",
+    "blog_not_found": "Blog post not found",
+    "loading": "Loading...",
+    "page_title_blog": "Blog",
+    "page_title_blog_detail": "Blog Detail"
 }
