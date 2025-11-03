@@ -254,24 +254,13 @@ function applyTranslation(lang) {
             });
         }
         
-        // 更新搜索框占位符
-        updateSearchPlaceholder();
-        
-        // 更新下拉选择框选项文本
-        const languageSelect = document.getElementById('language-select');
-        if (languageSelect) {
-            // 获取系统语言显示名称
-            const systemLang = getSystemLanguage();
-            const systemLangName = systemLang === 'zh' ? '简体中文' : 
-                                 systemLang === 'zh-tw' ? '繁體中文' : 
-                                 'English';
-                                 
-            languageSelect.options[0].text = (translations[lang] && translations[lang]['auto_language']) ? translations[lang]['auto_language'] : '自动' + "("+systemLangName+")";
-            
-            // 保持当前选中的语言不变
-            const currentValue = languageSelect.value;
-            languageSelect.value = currentValue;
+        // 更新搜索框占位符（仅当页面实现了该函数）
+        if (typeof updateSearchPlaceholder === 'function') {
+            updateSearchPlaceholder();
         }
+        
+        // 根据当前UI语言统一更新“自动”选项的文本
+        updateAutoOptionText();
         return;
     }
     
@@ -306,25 +295,13 @@ function applyTranslation(lang) {
             document.title = translation['page_title'] || defaultTitle;
         }
         
-        // 更新搜索框占位符
-        updateSearchPlaceholder();
-        
-        // 更新下拉选择框选项文本
-        const languageSelect = document.getElementById('language-select');
-        if (languageSelect) {
-            // 获取系统语言显示名称
-            const systemLang = getSystemLanguage();
-            const systemLangName = systemLang === 'zh' ? (translation['language_zh'] || '简体中文') : 
-                                 systemLang === 'zh-tw' ? (translation['language_zh_tw'] || '繁體中文') : 
-                                 (translation['language_en'] || 'English');
-            
-            // 设置"自动"选项文本
-            languageSelect.options[0].text = (translation['auto_language'] ? translation['auto_language'] : '自动') + "("+systemLangName+")";
-            
-            // 保持当前选中的语言不变
-            const currentValue = languageSelect.value;
-            languageSelect.value = currentValue;
+        // 更新搜索框占位符（仅当页面实现了该函数）
+        if (typeof updateSearchPlaceholder === 'function') {
+            updateSearchPlaceholder();
         }
+        
+        // 根据当前UI语言统一更新“自动”选项的文本
+        updateAutoOptionText();
     }
 }
 
@@ -367,6 +344,48 @@ function adjustLanguageSelectWidth() {
     // 测量副本元素的宽度并设置给下拉框
     const width = copy.offsetWidth;
     select.style.width = (width + 10) + 'px'; // 添加一些额外空间
+}
+
+// 统一更新语言选择器中“自动”选项的文本，使其随UI语言变化
+function updateAutoOptionText() {
+    const languageSelect = document.getElementById('language-select');
+    if (!languageSelect) return;
+    
+    // UI语言以用户选择为准（localStorage）
+    const savedLang = localStorage.getItem('language') || 'auto';
+    const systemLang = getSystemLanguage();
+    
+    // 系统语言显示名称，随UI语言变化
+    let systemLangName = '简体中文';
+    if (savedLang === 'zh') {
+        systemLangName = systemLang === 'zh' ? '简体中文' : (systemLang === 'zh-tw' ? '繁體中文' : 'English');
+    } else {
+        const uiTranslation = translations[savedLang] || {};
+        systemLangName = systemLang === 'zh' ? (uiTranslation['language_zh'] || '简体中文') :
+                         systemLang === 'zh-tw' ? (uiTranslation['language_zh_tw'] || '繁體中文') :
+                         (uiTranslation['language_en'] || 'English');
+    }
+    
+    // “自动”文本本身，随UI语言变化
+    let autoLabel = '自动';
+    if (savedLang === 'en') {
+        autoLabel = (translations['en'] && translations['en']['auto_language']) || 'auto';
+    } else if (savedLang === 'zh-tw') {
+        autoLabel = (translations['zh-tw'] && translations['zh-tw']['auto_language']) || '自動';
+    } else if (savedLang === 'wyw') {
+        autoLabel = (translations['wyw'] && translations['wyw']['auto_language']) || '自動';
+    } else {
+        autoLabel = '自动';
+    }
+    
+    languageSelect.options[0].text = `${autoLabel} (${systemLangName})`;
+    
+    // 保持当前选中的语言不变
+    const currentValue = languageSelect.value;
+    languageSelect.value = currentValue;
+    
+    // 宽度调整以适配新文本
+    adjustLanguageSelectWidth();
 }
 
 // 保存页面原始内容

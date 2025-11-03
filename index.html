@@ -799,14 +799,18 @@
 <script>
         function copyToClipboard(elementId) {
             const text = document.getElementById(elementId).textContent;
+            const button = event.target;
+            const originalText = button.textContent;
+            const lang = getCurrentLanguage();
+            
             navigator.clipboard.writeText(text).then(() => {
-                const button = document.querySelector('.copy-btn');
-                const originalText = button.textContent;
-                const lang = getCurrentLanguage();
-                button.textContent = translations[lang]['copied_btn'];
+                // 更新按钮文本和样式
+                button.textContent = (translations[lang] && translations[lang]['copied_btn']) ? translations[lang]['copied_btn'] : '已复制!';
                 button.style.backgroundColor = '#2ecc71';
+                
                 setTimeout(() => {
-                    button.textContent = translations[lang]['copy_btn'];
+                    // 恢复按钮文本和样式
+                    button.textContent = (translations[lang] && translations[lang]['copy_btn']) ? translations[lang]['copy_btn'] : '复制';
                     button.style.backgroundColor = '#3498db';
                 }, 2000);
             }).catch(err => {
