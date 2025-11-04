@@ -120,7 +120,7 @@
             for (let j = 0; j < lines.length && previewLines.length < 3; j++) {
                 const previewLine = lines[j].trim();
                 if (previewLine) { // 只添加非空行
-                    previewLines.push(previewLine.replace(/^#+/, ''));
+                    previewLines.push(previewLine.replace(/^(\s*[-*+>]|\s*\d+\.|\s*#+)\s*/, ''));
                 }
             }
             preview = previewLines.join(' ');

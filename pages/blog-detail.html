@@ -29,6 +29,22 @@
     <title data-translate-key="page_title_blog_detail">博客详情</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+    <script>
         let currentPost = null;
 
         // 页面特定的AI翻译标注函数实现
@@ -135,6 +151,34 @@
             // 渲染Markdown内容
             const markdownContent = marked.parse(currentPost.content);
             document.getElementById('article-content').innerHTML = markdownContent;
+            // 修正图片相对路径：将相对于博客文件的路径改为站点可访问路径
+            (function rewriteImageSrcs() {
+                const contentEl = document.getElementById('article-content');
+                if (!contentEl) return;
+                const blogBasePath = '../blog/';
+                const imgs = contentEl.querySelectorAll('img');
+                imgs.forEach(img => {
+                    const src = img.getAttribute('src') || '';
+                    if (!src) return;
+                    // 跳过 base64、网络路径(含协议或协议相对)、站点根路径、已经是目标路径
+                    if (/^data:image\//i.test(src) || /^(https?:)?\/\//i.test(src) || /^\//.test(src) || src.startsWith(blogBasePath)) {
+                        return;
+                    }
+                    // 规范化 ./ 前缀
+                    let normalized = src.replace(/^\.\//, '');
+                    // 对常见相对路径(assets/... 或 单文件名)进行重写，其它保持相对到博客目录
+                    if (/^assets\//.test(normalized) || !normalized.includes('/')) {
+                        img.setAttribute('src', blogBasePath + normalized);
+                    } else {
+                        img.setAttribute('src', blogBasePath + normalized);
+                    }
+                });
+            })();
+            if (window.MathJax) {
+                MathJax.startup.promise.then(() => {
+                    MathJax.typesetPromise();
+                }).catch((err) => console.error("MathJax typesetting failed:", err));
+            }
             
             // 隐藏加载状态
             document.getElementById('loading').style.display = 'none';
