@@ -174,6 +174,78 @@
                     }
                 });
             })();
+            // 增强代码块：添加语言标签与复制按钮（不与其它组件重叠）
+            (function enhanceCodeBlocks() {
+                const container = document.getElementById('article-content');
+                if (!container) return;
+                const blocks = container.querySelectorAll('pre > code');
+                blocks.forEach(codeEl => {
+                    const pre = codeEl.parentElement;
+                    if (!pre) return;
+                    // 避免重复包装
+                    if (pre.parentElement && pre.parentElement.classList.contains('code-block')) return;
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'code-block';
+                    const toolbar = document.createElement('div');
+                    toolbar.className = 'code-toolbar';
+
+                    // 语言标签
+                    const langClass = Array.from(codeEl.classList).find(c => c.startsWith('language-'));
+                    const lang = langClass ? langClass.replace('language-', '') : '';
+                    if (lang) {
+                        const langLabel = document.createElement('span');
+                        langLabel.className = 'code-lang';
+                        langLabel.textContent = lang;
+                        toolbar.appendChild(langLabel);
+                    }
+
+                    // 复制按钮
+                    const copyBtn = document.createElement('button');
+                    copyBtn.type = 'button';
+                    copyBtn.className = 'code-copy-btn';
+                    copyBtn.setAttribute('data-translate-key', 'copy_btn');
+                    copyBtn.textContent = '复制'; // 默认中文，后续调用翻译更新
+                    copyBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const text = codeEl.innerText || codeEl.textContent || '';
+                        const plain = String(text); // 避免 [Object object]
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(plain).then(() => {
+                                copyBtn.classList.add('copied');
+                                setTimeout(() => copyBtn.classList.remove('copied'), 1500);
+                            }).catch(() => {
+                                const ta = document.createElement('textarea');
+                                ta.value = plain;
+                                document.body.appendChild(ta);
+                                ta.select();
+                                try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+                                copyBtn.classList.add('copied');
+                                setTimeout(() => copyBtn.classList.remove('copied'), 1500);
+                            });
+                        } else {
+                            const ta = document.createElement('textarea');
+                            ta.value = plain;
+                            document.body.appendChild(ta);
+                            ta.select();
+                            try { document.execCommand('copy'); } finally { document.body.removeChild(ta); }
+                            copyBtn.classList.add('copied');
+                            setTimeout(() => copyBtn.classList.remove('copied'), 1500);
+                        }
+                    });
+                    toolbar.appendChild(copyBtn);
+
+                    // 插入结构
+                    pre.parentNode.insertBefore(wrapper, pre);
+                    wrapper.appendChild(pre);
+                    wrapper.appendChild(toolbar);
+                });
+
+                // 翻译更新，使复制按钮文本随当前语言变化
+                if (typeof getCurrentLanguage === 'function' && typeof applyTranslation === 'function') {
+                    const currentLang = getCurrentLanguage();
+                    applyTranslation(currentLang);
+                }
+            })();
             if (window.MathJax) {
                 MathJax.startup.promise.then(() => {
                     MathJax.typesetPromise();
@@ -411,23 +483,63 @@
             border: 1px solid var(--code-border);
             padding: 2px 6px;
             border-radius: 4px;
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
             font-size: 0.9em;
         }
 
         #article-content pre {
             background: var(--code-bg);
             border: 1px solid var(--code-border);
-            padding: 1.5rem;
+            padding: 2rem 2rem 0.5rem 2rem;
             border-radius: 8px;
             overflow-x: auto;
-            margin: 1.5rem 0;
+            margin: 2rem 0 0 0;
         }
 
         #article-content pre code {
             background: none;
             border: none;
             padding: 0;
+        }
+        /* 代码块增强样式 */
+        .code-block {
+            position: relative;
+            margin: 1.5rem 0;
+        }
+        .code-block pre {
+            padding-top: 2.2rem; /* 为顶部工具栏预留空间 */
+        }
+        .code-toolbar {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none; /* 避免遮挡代码滚动 */
+        }
+        .code-lang {
+            font-size: 0.85rem;
+            color: var(--heading-color);
+            opacity: 0.7;
+            background: transparent;
+        }
+        .code-copy-btn {
+            pointer-events: auto; /* 按钮可交互 */
+            background: transparent;
+            border: 1px solid var(--code-border);
+            color: var(--heading-color);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .code-copy-btn:hover {
+            background: rgba(0, 0, 0, 0.06);
+        }
+        .dark-theme .code-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
 
         #article-content img {
