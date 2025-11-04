@@ -203,8 +203,7 @@
                     const copyBtn = document.createElement('button');
                     copyBtn.type = 'button';
                     copyBtn.className = 'code-copy-btn';
-                    copyBtn.setAttribute('data-translate-key', 'copy_btn');
-                    copyBtn.textContent = '复制'; // 默认中文，后续调用翻译更新
+                    copyBtn.textContent = '📋'; 
                     copyBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const text = codeEl.innerText || codeEl.textContent || '';
@@ -240,11 +239,6 @@
                     wrapper.appendChild(toolbar);
                 });
 
-                // 翻译更新，使复制按钮文本随当前语言变化
-                if (typeof getCurrentLanguage === 'function' && typeof applyTranslation === 'function') {
-                    const currentLang = getCurrentLanguage();
-                    applyTranslation(currentLang);
-                }
             })();
             if (window.MathJax) {
                 MathJax.startup.promise.then(() => {
