@@ -93,6 +93,31 @@
             --copy-btn-active: #1565c0;
             --copy-success: #4caf50;
         }
+
+        .server-info {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 增加一些间距 */
+        }
+
+        .server-info p {
+            margin-bottom: 0;
+        }
+
+        .server-info button {
+            padding: 5px 10px;
+            background-color: var(--copy-btn-bg);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color var(--transition-speed);
+            margin-bottom: 15px;
+        }
+        
+        .server-info button:hover {
+            background-color: var(--copy-btn-hover);
+        }
         
         /* 基础样式 */
         * {
@@ -516,7 +541,7 @@
             line-height: 1.8;
         }
         
-        .server-address {
+        .server-status {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -754,7 +779,7 @@
                         <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
                     </div>
                     <div class="card-content">
-                        <p data-translate-key="network_security_desc">公开的复习资料</p>
+                        <p data-translate-key="network_security_desc">电子科技大学网络安全攻防期末复习资料，包含期末开卷ppt打印材料</p>
                     </div>
                     <div class="card-actions">
                         <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
@@ -765,17 +790,21 @@
                 <div class="small-card">
                     <div class="card-header">
                         <div class="card-icon">🎮</div>
-                        <h3 class="card-title" id="mc-server-text" data-translate-key="mc_server">MC服务器(JAVA 1.21.6)</h3>
+                        <h3 class="card-title" id="mc-server-text" data-translate-key="mc_server">MC服务器</h3>
                     </div>
                     <div class="card-content">
-                        <p data-translate-key="mc_server_desc">我的Minecraft服务器</p>
-                        <div class="server-address">
-                            <span id="server-ip" data-translate-key="server_status">暂时关闭</span>
+                        <p data-translate-key="mc_server_desc">目前不对外开放，供班级生存使用，不注册新玩家</p>
+                        <div class="server-info">
+                            <p id="server-ip">8.130.22.186:25565</p>
+                            <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制IP</button>
                         </div>
+                        <!-- <div class="server-status">
+                            <span data-translate-key="server_status">暂时关闭</span>
+                        </div> -->
                     </div>
-                    <!-- <div class="card-actions">
-                        <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制</button>
-                    </div> -->
+                    <div class="card-actions">
+                        <a href="https://wwyq.lanzouo.com/i5R4x3bsd01c" id="download-mc-client" class="card-link" data-translate-key="download_mc_client" target="_blank">下载一键整合包</a>
+                    </div>
                 </div>
             </div>
         </div>
