@@ -248,7 +248,12 @@ function applyTranslation(lang) {
                     } else if (element.hasAttribute('aria-label')) {
                         element.setAttribute('aria-label', originalContent[key]);
                     } else {
-                        element.textContent = originalContent[key];
+                        const mode = element.getAttribute('data-translate-mode');
+                        if (mode === 'html') {
+                            element.innerHTML = originalContent[key];
+                        } else {
+                            element.textContent = originalContent[key];
+                        }
                     }
                 }
             });
@@ -277,7 +282,12 @@ function applyTranslation(lang) {
                 } else if (element.hasAttribute('aria-label')) {
                     element.setAttribute('aria-label', translation[key]);
                 } else {
-                    element.textContent = translation[key];
+                    const mode = element.getAttribute('data-translate-mode');
+                    if (mode === 'html') {
+                        element.innerHTML = translation[key];
+                    } else {
+                        element.textContent = translation[key];
+                    }
                 }
             }
         });
@@ -411,7 +421,8 @@ function saveOriginalContent() {
         } else if (element.hasAttribute('aria-label')) {
             originalContent[key] = element.getAttribute('aria-label');
         } else {
-            originalContent[key] = element.textContent;
+            const mode = element.getAttribute('data-translate-mode');
+            originalContent[key] = mode === 'html' ? element.innerHTML : element.textContent;
         }
     });
 }

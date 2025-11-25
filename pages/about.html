@@ -451,6 +451,7 @@
             color: var(--text-color);
             line-height: 1.6;
             font-size: 1rem;
+            text-indent: 2em;
         }
 
         /* 联系方式卡片区域 */
@@ -668,8 +669,11 @@
             </div>
             <div class="intro-content">
                 <div class="intro-title" data-translate-key="intro_title">DPCau</div>
-                <div class="intro-text" data-translate-key="intro_text">
-                    有待填写
+                <!-- 增加data-translate-mode="html"使得可以解析html标签而不被翻译覆盖 -->
+                <div class="intro-text" data-translate-key="intro_text" data-translate-mode="html">
+                    <p>我目前是一名普通大学学生，这个主页网站下可以导航到例如网盘、知识库的一些工具应用。</p>
+                    <p>所有站内应用均启动在个人服务器上，它们主要来自其它开源项目，暴露公网部署，因此可能会更换地址，收藏本地址发布页可以获得最新地址，供学习参考。</p>
+                    <p>站外服务主要展示一些难寻资源，其内容可能在不知情情况下修改，本站不对其做内容保证，请自行甄别。</p>
                 </div>
             </div>
         </div>
