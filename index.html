@@ -97,7 +97,8 @@
         .server-info {
             display: flex;
             align-items: center;
-            gap: 10px; /* 增加一些间距 */
+            gap: 10px;
+            margin-bottom: 10px; /* 在行与行之间添加间距 */
         }
 
         .server-info p {
@@ -112,7 +113,6 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color var(--transition-speed);
-            margin-bottom: 15px;
         }
         
         .server-info button:hover {
@@ -756,8 +756,8 @@
                         <p id="disk-note" data-translate-key="disk_note">（首次进入可能加载较久）</p>
                     </div>
                     <div class="card-actions">
-                        <a href="http://cd-1.frp.one:15212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
-                        <!-- <a href="https://shpyqj-rmlnoa-5212.app.cloudstudio.work/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a> -->
+                        <a href="http://119.23.79.195:17080/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
+                        <a href="http://cd-1.frp.one:15212/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a>
                     </div>
                 </div>
 
@@ -833,7 +833,7 @@
                             <p id="server-ip">8.130.22.186:25565</p>
                             <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('server-ip')" data-translate-key="copy_btn">复制IP</button>
                         </div>
-                        <div class="sever-info">
+                        <div class="server-info">
                             <p id="backup-server-ip">cd-1.frp.one:55565</p>
                             <button id="copy-btn" class="copy-btn" onclick="copyToClipboard('backup-server-ip')" data-translate-key="copy_btn">复制IP</button>
                         </div>
