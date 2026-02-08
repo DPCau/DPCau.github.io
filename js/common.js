@@ -217,6 +217,11 @@ async function changeLanguage(lang) {
         if (currentLang !== 'zh' && currentLang !== 'zh-tw' && currentLang !== 'wyw') {
             addAITranslationNote();
         }
+        
+        // 语言切换后触发通知检查（如果页面定义了该函数）
+        if (typeof checkNotification === 'function') {
+            checkNotification();
+        }
     }
 }
 
