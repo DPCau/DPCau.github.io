@@ -746,10 +746,10 @@
         <h1 id="main-heading" data-translate-key="page_title_index">地址发布页</h1>
         
         <!-- 通知区域 -->
-        <div id="notification-area" class="notification-area">
+        <!-- <div id="notification-area" class="notification-area">
             <span class="notification-icon">📢</span>
             <div class="notification-content" id="notification-content" data-translate-key="site_notification">注意！因春节返家断电，暂时关闭服务器，部分服务功能于北京时间2026-2-8 20:00至2026-3-1 20:00停止，若有其它问题请与我联系</div>
-        </div>
+        </div> -->
 
         <!-- 主卡片 - 个人主页 -->
         <div class="main-card">
@@ -784,20 +784,6 @@
             <h2 class="group-title" data-translate-key="internal_links">站内链接</h2>
             <div class="cards-grid">
 
-                <!-- 网络安全复习卡片 -->
-                <div class="small-card">
-                    <div class="card-header">
-                        <div class="card-icon">📝</div>
-                        <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
-                    </div>
-                    <div class="card-content">
-                        <p data-translate-key="network_security_desc">电子科技大学网络安全攻防期末复习资料，包含期末开卷ppt打印材料</p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
-                    </div>
-                </div>
-
                 <!-- 知识库卡片 -->
                 <div class="small-card">
                     <div class="card-header">
@@ -808,9 +794,9 @@
                         <p data-translate-key="knowledge_base_desc">DPCau私人知识库与博客</p>
                     </div>
                     <div class="card-actions">
-                        <a id="enter-knowledge-base-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a>
-                        <!-- <a href="http://47.109.55.170:18080/" id="enter-knowledge-base-link" class="card-link" data-translate-key="enter-knowledge-base" target="_blank">进入</a> -->
-                        <!-- <a href="https://8.130.22.186:60080/" id="enter-knowledge-base-link-2" class="card-link secondary" data-translate-key="enter-disk-link-2" target="_blank">备用地址</a> -->
+                        <!-- <a id="enter-knowledge-base-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a> -->
+                        <a href="http://47.109.55.170:18080/" id="enter-knowledge-base-link" class="card-link" data-translate-key="enter-knowledge-base" target="_blank">进入</a>
+                        <a href="https://8.130.22.186:60080/" id="enter-knowledge-base-link-2" class="card-link secondary" data-translate-key="enter-disk-link-2" target="_blank">备用地址</a>
                     </div>
                 </div>
                 
@@ -826,9 +812,9 @@
                         <p id="disk-note" data-translate-key="disk_note">（首次进入可能加载较久）</p>
                     </div>
                     <div class="card-actions">
-                        <a id="enter-disk-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a>
-                        <!-- <a href="http://47.109.55.170:15212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a> -->
-                        <!-- <a href="http://119.23.79.195:17080/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a> -->
+                        <!-- <a id="enter-disk-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a> -->
+                        <a href="http://47.109.55.170:15212/" id="enter-disk-link" target="_blank" class="card-link" data-translate-key="enter_disk">进入网盘</a>
+                        <a href="http://119.23.79.195:17080/" id="enter-disk-link-2" target="_blank" class="card-link secondary" data-translate-key="enter-disk-link-2">备用地址</a>
                     </div>
                 </div>
 
@@ -843,8 +829,37 @@
                         <p data-translate-key="gitea_repo_desc">私有的Gitea仓库，也可以同步其它仓库的镜像</p>
                     </div>
                     <div class="card-actions">
-                        <a id="enter-gitea-repo-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a>
-                        <!-- <a href="https://8.130.22.186:53000/explore/repos" id="enter-gitea-repo-link" target="_blank" class="card-link" data-translate-key="enter_gitea_repo">进入仓库</a> -->
+                        <!-- <a id="enter-gitea-repo-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a> -->
+                        <a href="https://8.130.22.186:53000/explore/repos" id="enter-gitea-repo-link" target="_blank" class="card-link" data-translate-key="enter_gitea_repo">进入仓库</a>
+                    </div>
+                </div>
+
+                <!-- Instant-Info -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">💻</div>
+                        <h3 class="card-title" id="instant-info-text" data-translate-key="instant_info">Instant Info 命令行结果推送服务</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="instant_info_desc">将命令行执行结果推送到邮件</p>
+                    </div>
+                    <div class="card-actions">
+                        <!-- <a id="enter-instant-info" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a> -->
+                        <a href="https://8.130.22.186:19090/" id="enter-instant-info" target="_blank" class="card-link" data-translate-key="enter_instant_info">进入</a>
+                    </div>
+                </div>
+
+                <!-- 网络安全复习卡片 -->
+                <div class="small-card">
+                    <div class="card-header">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title" id="uestc-network-security-attack-and-defense-revision" data-translate-key="uestc_network_security_attack_and_defense_revision">电子科技大学信息与软件工程学院网络安全攻防期末复习</h3>
+                    </div>
+                    <div class="card-content">
+                        <p data-translate-key="network_security_desc">电子科技大学网络安全攻防期末复习资料，包含期末开卷ppt打印材料</p>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://fcnj7ansjqac.feishu.cn/docx/UfiIdU1IboelG4xZtbGc2dzKnzg" id="enter-uestc-network-security-attack-and-defense-doc-link" target="_blank" class="card-link" data-translate-key="enter_uestc_network_security_attack_and_defense_doc_link">进入文档</a>
                     </div>
                 </div>
 
@@ -859,23 +874,8 @@
                         <p data-translate-key="tail_chat_desc">私有聊天平台，实时交流沟通</p>
                     </div>
                     <div class="card-actions">
-                        <a id="enter-tail-chat-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a>
-                        <!-- <a href="https://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank" class="card-link" data-translate-key="enter_tail_chat">进入Tail Chat</a> -->
-                    </div>
-                </div>
-
-                <!-- Instant-Info -->
-                <div class="small-card">
-                    <div class="card-header">
-                        <div class="card-icon">💻</div>
-                        <h3 class="card-title" id="instant-info-text" data-translate-key="instant_info">Instant Info 命令行结果推送服务</h3>
-                    </div>
-                    <div class="card-content">
-                        <p data-translate-key="instant_info_desc">将命令行执行结果推送到邮件</p>
-                    </div>
-                    <div class="card-actions">
-                        <a id="enter-instant-info" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a>
-                        <!-- <a href="https://8.130.22.186:19090/" id="enter-instant-info" target="_blank" class="card-link" data-translate-key="enter_instant_info">进入</a> -->
+                        <!-- <a id="enter-tail-chat-link" class="card-link" data-translate-key="temporarily-closed" target="_blank">暂时关闭</a> -->
+                        <a href="https://8.130.22.186:61000/" id="enter-tail-chat-link" target="_blank" class="card-link" data-translate-key="enter_tail_chat">进入Tail Chat</a>
                     </div>
                 </div>
 
